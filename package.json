@@ -1,0 +1,20 @@
+{
+  "name": "relay",
+  "version": "1.0.0",
+  "private": true,
+  "description": "RELAY - a daily signal puzzle. Zero-dependency game; these packages are for TESTING only.",
+  "scripts": {
+    "test": "node test/gates.js",
+    "sweep": "node test/see.js index.html --sweep",
+    "shot": "node test/see.js index.html --out shot.png",
+    "verify": "npm run test && npm run sweep",
+    "setup": "npm install && npx playwright install chromium",
+    "serve": "python -m http.server 8000"
+  },
+  "devDependencies": {
+    "jsdom": "^27.0.0",
+    "pixelmatch": "^7.2.0",
+    "playwright": "^1.62.0",
+    "pngjs": "^7.0.0"
+  }
+}
