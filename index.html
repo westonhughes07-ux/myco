@@ -1471,10 +1471,10 @@ function newBoard(){
   curHue=(mode==="level"&&window.WORLDS)?window.WORLDS[curW-1].hue:158;
   $("#pno").textContent=curNo;
   var TH=thresholds(G.par);
-  $("#pr").textContent = isTimed ? fmt(timeLimit) : ("\u2264"+TH.t3);
+  $("#pr").textContent = isTimed ? fmt(timeLimit) : TH.t3;
   var gw=$("#goalWrap");
   if(gw){
-    gw.firstChild.nodeValue = isTimed ? "Beat " : "3\u2605 ";
+    gw.firstChild.nodeValue = isTimed ? "Beat " : "3\u2605 in ";
     var stake=gw.querySelector(".stake");
     if(!stake){ stake=document.createElement("span"); stake.className="stake"; gw.appendChild(stake); }
     var wantsSpore = (mode==="level" && typeof curL==="number");
