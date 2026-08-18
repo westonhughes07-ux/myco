@@ -400,6 +400,60 @@ footer{font-size:.7rem;font-weight:600;color:#b9a4ee;text-align:center;line-heig
 
 
 
+
+/* ---------- DAILY CALENDAR + QUESTS ----------
+   Same 4-layer treatment as every other surface: outline, vertical fill,
+   inner gloss, hard bottom extrude. State is carried by fill + extrude,
+   never by swapping a border colour. */
+.cal{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s2);margin:var(--s3) 0}
+.cal .d{position:relative;border-radius:14px;padding:var(--s2) 2px var(--s1);
+  display:grid;place-items:center;gap:2px;min-height:70px;
+  background:linear-gradient(180deg,#a487ee,#7b58d6);
+  border:3px solid var(--ink,#0f0620);
+  box-shadow:0 4px 0 var(--ink,#0f0620), inset 0 2px 0 rgba(255,255,255,.34)}
+.cal .d .lbl{color:#2a1745}
+.cal .d.done{background:linear-gradient(180deg,#d9cdb4,#bdae92);box-shadow:0 2px 0 #6a5b3e}
+.cal .d.done .amt,.cal .d.done .lbl{color:#6a5b3e}
+.cal .d.done .tick2{color:#2f7d5c}
+.cal .d.now{background:linear-gradient(180deg,var(--mint-2,#a8ffe0),var(--mint,#6affc4));
+  box-shadow:0 5px 0 var(--ink,#0f0620), inset 0 2px 0 rgba(255,255,255,.5)}
+.cal .d.now .lbl,.cal .d.now .amt{color:#07301f}
+.cal .d.big7{grid-column:1/-1;min-height:56px}
+.cal .lbl{font-size:.6rem;font-weight:800;letter-spacing:.06em;color:#2a1745;text-transform:uppercase}
+.cal .amt{font-size:.86rem;font-weight:900;color:#fff}
+.cal .tick2{position:absolute;top:3px;right:5px;font-size:.7rem;color:#6affc4}
+.frz{font-size:.72rem;font-weight:700;color:#2f6d8a;text-align:center;min-height:1.1em}
+.qhead{margin:var(--s4) 0 var(--s2);font-size:.66rem;font-weight:900;letter-spacing:.1em;
+  text-transform:uppercase;color:#6a5b3e;text-align:left}
+.qlist{display:flex;flex-direction:column;gap:var(--s2)}
+.q{display:grid;grid-template-columns:1fr auto;gap:2px var(--s2);align-items:center;
+  padding:var(--s2);border-radius:13px;text-align:left;
+  background:linear-gradient(180deg,#4a3170,#33204f);
+  border:3px solid var(--ink,#0f0620);box-shadow:0 3px 0 var(--ink,#0f0620)}
+.q .qt{font-size:.78rem;font-weight:800;color:#efe6ff}
+.q .qbar{grid-column:1;grid-row:2;height:8px;border-radius:99px;overflow:hidden;background:#1a0f2e;
+  box-shadow:inset 0 2px 0 rgba(0,0,0,.5)}
+.q .qbar i{display:block;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,var(--mint,#6affc4),#39e0ff)}
+.q .qt{grid-column:1;grid-row:1}
+.q .qr{grid-column:2;grid-row:1/3;align-self:center;font-size:.76rem;font-weight:900;color:#ffd84d;white-space:nowrap}
+.q.done{background:linear-gradient(180deg,#1f5c46,#143d2f)}
+.q.done .qr{color:#6affc4}
+#claimDay,#claimCb{width:100%;margin-top:var(--s2);padding:var(--s3);border-radius:16px;
+  font-size:.95rem;font-weight:900;color:#07301f;
+  background:linear-gradient(180deg,var(--mint-2,#a8ffe0),var(--mint,#6affc4));
+  border:3px solid var(--ink,#0f0620);
+  box-shadow:0 5px 0 var(--ink,#0f0620), inset 0 2px 0 rgba(255,255,255,.5)}
+#claimDay:active,#claimCb:active{transform:translateY(3px);box-shadow:0 2px 0 var(--ink,#0f0620)}
+#claimDay:disabled{color:#6a5b3e;background:linear-gradient(180deg,#d9cdb4,#bdae92);
+  box-shadow:0 3px 0 #6a5b3e}
+/* day 7 is the payoff the whole week points at - it gets the gold treatment */
+.cal .d.big7{background:linear-gradient(180deg,#ffe89a,#ffb31c);box-shadow:0 5px 0 #b06a00, inset 0 2px 0 rgba(255,255,255,.5)}
+.cal .d.big7 .lbl,.cal .d.big7 .amt{color:#5a3400}
+.cal .d.big7.done{background:linear-gradient(180deg,#d9cdb4,#bdae92);box-shadow:0 2px 0 #6a5b3e}
+.cbgift{display:flex;justify-content:center;gap:var(--s3);margin:var(--s3) 0}
+.cbgift div{font-size:.9rem;font-weight:900;color:#fff}
+
 /* ---------- CONTROL DOCK ----------
    The grove backdrop runs the full viewport, so the controls need their own
    plate to stay on the UI layer instead of floating over scene art. */
@@ -788,9 +842,29 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
   <div id="msg"></div>
 </div></div>
 
+<div class="ov" id="dov"><div class="cd">
+  <button class="x" data-close>✕</button>
+  <h2 id="dailyTitle"></h2>
+  <div class="tg" id="dsub">Come back each day, the forest remembers</div>
+  <div class="cal" id="cal"></div>
+  <div class="frz" id="frzNote"></div>
+  <button class="big" id="claimDay">Collect</button>
+  <div class="qhead">Today's foraging</div>
+  <div class="qlist" id="qlist"></div>
+</div></div>
+
+<div class="ov" id="cbov"><div class="cd">
+  <button class="x" data-close>✕</button>
+  <h2 id="cbTitle"></h2>
+  <div class="tg">The grove grew wild while you were gone</div>
+  <div class="cbgift" id="cbgift"></div>
+  <button class="big" id="claimCb">Take it</button>
+</div></div>
+
 <div class="ov" id="sov"><div class="cd">
   <button class="x" data-close>✕</button>
   <h2 id="statsTitle"></h2><div class="tg">Saved on this device</div>
+  <button class="big" id="openDailyBtn">Daily rewards</button>
   <div class="sc">
     <div><b id="sPlayed">0</b><span>Solved</span></div>
     <div><b id="sStreak">0</b><span>Streak</span></div>
@@ -799,6 +873,8 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
   </div>
   <div class="hist" id="hist"></div>
   <div class="rt" style="font-size:.76rem">Strands over the 3-star goal when you finish.</div>
+  <div class="qhead">Today's foraging</div>
+  <div class="qlist" id="qlist2"></div>
 </div></div>
 
 <div class="ov" id="hov"><div class="cd">
@@ -915,7 +991,7 @@ window.bubbleText=function(str,opts){
     '</svg>';
   return svg;
 };
-  if(window.fitBoard){ window.fitBoard(); setTimeout(window.fitBoard,300); }
+
 })();
 
 </script>
@@ -1531,7 +1607,16 @@ function recordWin(ns){
     s.max=Math.max(s.max||0,s.streak||1);
     (s.done=s.done||{})[tk]={m:moves,s:ns,t:elapsed};
   }
-  save(s); return s;
+  save(s);
+  /* quest progress rides on the same win event so it can never double-count */
+  try{
+    bumpQuest("level",1);
+    if(ns>0) bumpQuest("star",ns);
+    if(G&&G.K) bumpQuest("strand",G.K);
+    if(ns>=3) bumpQuest("perfect",1);
+    if(hintsLeft>=3) bumpQuest("nohint",1);
+  }catch(e){}
+  return s;
 }
 function finish(){
   var ns = isTimed ? starsForTime(timeLeft,timeLimit) : starsFor(moves,G.par);
@@ -1754,6 +1839,148 @@ if(!st.seen){
 }
 
 /* ---- bridge: the only things the world screens need from in here ---- */
+/* ================= DAILY SYSTEMS (login calendar, quests, comeback) =======
+   All three run off UTC day keys so they roll over at the same instant as
+   the Daily Tangle. Missing a day FREEZES the streak once per rolling week
+   rather than resetting it - a reset is the single biggest day-2 churn
+   driver in casual puzzle games. */
+var DAY_REWARDS=[
+  {t:"spores",n:50},  {t:"spores",n:75},  {t:"reveal",n:1},
+  {t:"spores",n:120}, {t:"bloom",n:1},    {t:"spores",n:200},
+  {t:"glow",n:5}
+];
+var RLABEL={spores:"Spores",glow:"Glowcaps",reveal:"Reveal",bloom:"Bloom",freeze:"Freeze",lucky:"Lucky",skip:"Skip"};
+
+function dayIndex(k){ return k?Math.round(Date.parse(k+"T00:00:00Z")/DAY):null }
+function weekOf(k){ return Math.floor(dayIndex(k)/7) }
+
+function dstate(s){
+  if(!s.dl) s.dl={day:0,claimed:"",fweek:null};
+  return s.dl;
+}
+/* Decide today's calendar position. Pure: safe to call on every render. */
+function dailyRoll(s){
+  var tk=keyOf(todayUTC()), dl=dstate(s);
+  if(dl.claimed===tk) return {pending:false,day:dl.day,froze:false};
+  var gap=dl.claimed?dayIndex(tk)-dayIndex(dl.claimed):null;
+  var froze=false, day;
+  if(gap===1||dl.day===0&&!dl.claimed&&gap===null){ day=dl.day%7+1 }
+  else if(gap===2 && dl.fweek!==weekOf(tk)){ day=dl.day%7+1; froze=true }
+  else if(gap===null){ day=1 }
+  else { day=1 }
+  return {pending:true,day:day,froze:froze};
+}
+function claimDaily(){
+  var s=load(), tk=keyOf(todayUTC()), r=dailyRoll(s);
+  if(!r.pending) return null;
+  var dl=dstate(s), rw=DAY_REWARDS[r.day-1];
+  if(rw.t==="spores") s.spores=(s.spores||0)+rw.n;
+  else if(rw.t==="glow") s.glow=(s.glow||0)+rw.n;
+  else { s.inv=s.inv||{}; s.inv[rw.t]=(s.inv[rw.t]||0)+rw.n }
+  dl.day=r.day; dl.claimed=tk;
+  if(r.froze) dl.fweek=weekOf(tk);
+  save(s); return rw;
+}
+
+/* ---- quests: 3 per UTC day, chosen by the date seed so everyone shares them ---- */
+var QPOOL=[
+  {id:"lv2",  txt:"Clear 2 tangles",         kind:"level",  goal:2,  rw:70},
+  {id:"lv3",  txt:"Clear 3 tangles",         kind:"level",  goal:3,  rw:100},
+  {id:"st5",  txt:"Earn 5 stars",            kind:"star",   goal:5,  rw:80},
+  {id:"st8",  txt:"Earn 8 stars",            kind:"star",   goal:8,  rw:120},
+  {id:"sd14", txt:"Link 14 strands",         kind:"strand", goal:14, rw:70},
+  {id:"sd22", txt:"Link 22 strands",         kind:"strand", goal:22, rw:110},
+  {id:"pf1",  txt:"Three-star a tangle",     kind:"perfect",goal:1,  rw:90},
+  {id:"nh1",  txt:"Finish without a hint",   kind:"nohint", goal:1,  rw:90}
+];
+function questsToday(s){
+  var tk=keyOf(todayUTC());
+  if(!s.q||s.q.d!==tk){
+    var rand=mulberry32(hash("quest-"+tk)), pool=QPOOL.slice(), pick=[];
+    /* one of each kind family so the three never collapse into duplicates */
+    var kinds=["level","star","strand"];
+    for(var i=0;i<kinds.length;i++){
+      var opts=pool.filter(function(q){return q.kind===kinds[i]});
+      pick.push(opts[Math.floor(rand()*opts.length)]);
+    }
+    if(rand()<0.5){ var ex=pool.filter(function(q){return q.kind==="perfect"||q.kind==="nohint"});
+      pick[Math.floor(rand()*3)]=ex[Math.floor(rand()*ex.length)]; }
+    s.q={d:tk,list:pick.map(function(q){return {id:q.id,p:0,c:false}}),bonus:false};
+    save(s);
+  }
+  return s.q;
+}
+function qdef(id){ for(var i=0;i<QPOOL.length;i++) if(QPOOL[i].id===id) return QPOOL[i]; return null }
+
+/* Called from gameplay. Grants on completion immediately - no claim tap,
+   because a claim step on a quest the player already finished is pure friction. */
+function bumpQuest(kind,n){
+  var s=load(), q=questsToday(s), changed=false;
+  for(var i=0;i<q.list.length;i++){
+    var e=q.list[i], d=qdef(e.id);
+    if(!d||e.c||d.kind!==kind) continue;
+    e.p=Math.min(d.goal,e.p+n);
+    if(e.p>=d.goal){ e.c=true; s.spores=(s.spores||0)+d.rw; }
+    changed=true;
+  }
+  if(changed && !q.bonus && q.list.every(function(e){return e.c})){
+    q.bonus=true; s.glow=(s.glow||0)+3;
+  }
+  if(changed){ s.q=q; save(s); renderQuests(); }
+}
+
+/* ---- comeback: 3+ days away ---- */
+var CB={spores:150,reveal:1,bloom:1};
+function comebackDue(s){
+  var tk=keyOf(todayUTC()), dl=dstate(s);
+  if(!dl.claimed) return false;
+  if(s.cb===tk) return false;
+  return (dayIndex(tk)-dayIndex(dl.claimed))>=3;
+}
+function claimComeback(){
+  var s=load();
+  s.spores=(s.spores||0)+CB.spores;
+  s.inv=s.inv||{};
+  s.inv.reveal=(s.inv.reveal||0)+CB.reveal;
+  s.inv.bloom=(s.inv.bloom||0)+CB.bloom;
+  s.cb=keyOf(todayUTC()); save(s);
+}
+
+/* ---- rendering ---- */
+function renderCal(){
+  var host=document.getElementById("cal"); if(!host) return;
+  var s=load(), dl=dstate(s), r=dailyRoll(s), html="";
+  for(var i=1;i<=7;i++){
+    var rw=DAY_REWARDS[i-1], cls="d"+(i===7?" big7":"");
+    var reached = dl.claimed ? (i<r.day || (!r.pending && i<=dl.day)) : false;
+    if(i===r.day && r.pending) cls+=" now"; else if(reached) cls+=" done";
+    html+='<div class="'+cls+'">'+(reached?'<span class="tick2">✓</span>':'')+
+      '<span class="lbl">Day '+i+'</span>'+
+      '<span class="amt">'+(rw.t==="spores"||rw.t==="glow"?rw.n+" ":"")+RLABEL[rw.t]+'</span></div>';
+  }
+  host.innerHTML=html;
+  var btn=document.getElementById("claimDay");
+  if(btn){ btn.disabled=!r.pending; btn.textContent=r.pending?"Collect day "+r.day:"Come back tomorrow" }
+  var note=document.getElementById("frzNote");
+  if(note) note.textContent=r.froze?"You missed a day — streak frozen, not lost.":
+    (dl.fweek===weekOf(keyOf(todayUTC()))?"Freeze used this week.":"");
+}
+function renderQuests(){
+  var s=load(), q=questsToday(s), html="";
+  for(var i=0;i<q.list.length;i++){
+    var e=q.list[i], d=qdef(e.id); if(!d) continue;
+    var pct=Math.round(100*Math.min(1,e.p/d.goal));
+    html+='<div class="q'+(e.c?" done":"")+'"><span class="qt">'+d.txt+'</span>'+
+      '<span class="qr">'+(e.c?"✓ +"+d.rw:"+"+d.rw)+'</span>'+
+      '<span class="qbar"><i style="width:'+pct+'%"></i></span></div>';
+  }
+  if(q.bonus) html+='<div class="q done"><span class="qt">All three foraged</span><span class="qr">✓ +3 Glowcaps</span></div>';
+  else html+='<div class="q"><span class="qt">Finish all three</span><span class="qr">+3 Glowcaps</span></div>';
+  ["qlist","qlist2"].forEach(function(id){ var el=document.getElementById(id); if(el) el.innerHTML=html });
+}
+function openDaily(){ renderCal(); renderQuests();
+  var d=document.getElementById("dov"); if(d) d.classList.add("on"); }
+
 /* ---- fit the play column to the viewport ------------------------------
    The chrome above the board changes height (boss row appears, mode tabs
    reflow, world reskins), so the board ceiling is measured, not guessed.
@@ -1779,8 +2006,12 @@ function fitBoard(){
 addEventListener("resize",fitBoard);
 addEventListener("orientationchange",fitBoard);
 window.fitBoard=fitBoard;
+window.__daily={open:openDaily,claim:claimDaily,roll:function(){return dailyRoll(load())},
+  cbDue:function(){return comebackDue(load())},cbClaim:claimComeback,
+  cal:renderCal,quests:renderQuests,state:load};
 
 window.__game={
+  refreshPw:refreshPw, questBump:bumpQuest,
   spend:function(cost,cur){
     var s=load();
     if(cur==="glow"){ if((s.glow||0)<cost) return -1; s.glow-=cost; save(s); return s.glow; }
@@ -1866,6 +2097,8 @@ window.__cityLight(saved);
   set("winTitle","BLOOM!",{fill:"#ff8ec4",fill2:"#e0308a",outline:"#0f0620",extrude:"#8f1256",tilt:1.5});
   set("statsTitle","RECORD",{fill:"#ffe89a",fill2:"#ffb31c",outline:"#0f0620",extrude:"#b06a00"});
   set("helpTitle","HOW TO PLAY",{fill:"#a8ffe0",fill2:"#16b98a",outline:"#0f0620",extrude:"#0b6d51"});
+  set("dailyTitle","DAILY",{fill:"#ffe89a",fill2:"#ffb31c",outline:"#0f0620",extrude:"#b06a00"});
+  set("cbTitle","WELCOME BACK",{fill:"#c9b3ff",fill2:"#7b4dff",outline:"#0f0620",extrude:"#3a1f8f"});
 })();
 
 </script>
@@ -2708,6 +2941,40 @@ if(window.__decorateHeaders) window.__decorateHeaders(null);
   });
   try{ var s0=JSON.parse(localStorage.getItem("relay.v2"))||{};
     if(s0.gold) document.querySelector(".meter i").style.background="linear-gradient(90deg,#ffd84d,#ffb31c)"; }catch(e){}
+  if(window.fitBoard){ window.fitBoard(); setTimeout(window.fitBoard,300); }
+
+  /* ---- daily systems: comeback takes precedence, then the login calendar ---- */
+  (function(){
+    var D=window.__daily; if(!D) return;
+    function refreshBal(){
+      var s=D.state();
+      var bs=document.getElementById("balSpores"); if(bs) bs.textContent=s.spores||0;
+      var bg=document.getElementById("balGlow");   if(bg) bg.textContent=s.glow||0;
+      if(window.__game && window.__game.refreshPw) window.__game.refreshPw();
+    }
+    var cd=document.getElementById("claimDay");
+    if(cd) cd.addEventListener("click",function(){
+      if(!D.claim()) return;
+      D.cal(); refreshBal();
+    });
+    var cb=document.getElementById("claimCb");
+    if(cb) cb.addEventListener("click",function(){
+      D.cbClaim(); refreshBal();
+      document.getElementById("cbov").classList.remove("on");
+      if(D.roll().pending) D.open();
+    });
+    var ob=document.getElementById("openDailyBtn");
+    if(ob) ob.addEventListener("click",function(){
+      var s=document.getElementById("sov"); if(s) s.classList.remove("on");
+      D.open();
+    });
+    D.quests();
+    setTimeout(function(){
+      if(document.querySelector(".ov.on")) return;   /* never stack on the intro */
+      if(D.cbDue()){ document.getElementById("cbov").classList.add("on"); }
+      else if(D.roll().pending){ D.open(); }
+    },900);
+  })();
 })();
 
 </script>
