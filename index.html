@@ -135,7 +135,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
   box-shadow:inset 0 -3px 0 rgba(0,0,0,.16);transition:width .35s var(--e)}
 
 /* ---------- the board ---------- */
-.frame{position:relative;padding:var(--s2);border-radius:18px;
+.frame{position:relative;width:min(100%,var(--bmax,100%));margin-inline:auto;padding:var(--s2);border-radius:18px;overflow:visible;
   background:linear-gradient(180deg,#7a4fe8,#5228c0);
   border:4px solid var(--outline);
   box-shadow:0 6px 0 var(--outline), inset 0 3px 0 rgba(255,255,255,.26)}
@@ -399,8 +399,23 @@ footer{font-size:.7rem;font-weight:600;color:#b9a4ee;text-align:center;line-heig
 @keyframes fb{0%{opacity:.3}to{opacity:0}}
 
 
+
+/* ---------- CONTROL DOCK ----------
+   The grove backdrop runs the full viewport, so the controls need their own
+   plate to stay on the UI layer instead of floating over scene art. */
+.dock{display:flex;flex-direction:column;gap:var(--s2);
+  padding:var(--s2) var(--s2) var(--s1);border-radius:20px;
+  background:linear-gradient(180deg,rgba(38,20,68,.94),rgba(24,12,46,.97));
+  border:3px solid var(--ink,#0f0620);
+  box-shadow:0 5px 0 var(--ink,#0f0620), inset 0 2px 0 rgba(255,255,255,.10)}
+.dock .tick{padding:0 var(--s1) var(--s1)}
+/* disabled powerups must still read as buttons, not holes in the plate */
+.pw:disabled{filter:none;opacity:1;color:#7f6aa8;
+  background:linear-gradient(180deg,#332049,#241436);
+  box-shadow:0 3px 0 var(--ink,#0f0620), inset 0 2px 0 rgba(255,255,255,.06)}
+
 /* ---------- BOTTOM TAB BAR ---------- */
-body{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
+body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 #tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;
   display:flex;justify-content:center;gap:14px;
   padding:9px 14px calc(10px + env(safe-area-inset-bottom));
@@ -439,6 +454,8 @@ body{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
 .shopitem .sb span{font-size:.72rem;font-weight:600;color:#c3aef0}
 .buy{flex:0 0 auto;width:auto;padding:9px 14px;border-radius:12px;font-size:.78rem}
 .buy:disabled{opacity:.45}
+.buy.gl{background:linear-gradient(180deg,#9fd8ff,#4a90d8);color:#06283d;box-shadow:0 4px 0 #1a5d8c, inset 0 2px 0 rgba(255,255,255,.5)}
+.owned{opacity:.6}
 .soon{opacity:.55}
 #shopMsg{text-align:center;font-size:.76rem;font-weight:800;color:var(--mint-2,#a8ffe0);height:16px}
 
@@ -475,6 +492,46 @@ body{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
 
 .stake{filter:drop-shadow(0 0 4px var(--wglow));font-size:.86em}
 #goalWrap{cursor:help}
+
+
+/* glyph buttons are grids so art centres optically, never on a text baseline */
+.tab,.tbtn,.icon,.buy{display:grid;place-items:center;line-height:0}
+.tab .gly,.tbtn svg,.icon svg{display:block}
+.ctl button{display:inline-flex;align-items:center;justify-content:center;gap:var(--s1);line-height:1}
+
+
+/* live rating: three pips that burn out as strands are spent */
+.sl-left{flex:0 0 auto}
+.sl-rate{display:inline-flex;gap:var(--s1);align-items:center;flex:0 0 auto}
+.pip{width:19px;height:19px;stroke:#0f0620;stroke-width:1.6;stroke-linejoin:round;
+  fill:#3a2a5e;transition:fill .25s var(--e),filter .25s var(--e),transform .25s var(--spring)}
+.pip.lit{fill:var(--gold-2,#a8ffe0);filter:drop-shadow(0 0 5px var(--wglow))}
+.pip.spent{fill:#2b2048;opacity:.6;transform:scale(.86)}
+.sl-budget{display:inline-flex;align-items:center;gap:3px;flex:0 0 auto;
+  background:rgba(15,6,32,.5);border:2px solid rgba(255,255,255,.09);
+  border-radius:999px;padding:2px var(--s2);font-size:.72rem;color:#c9b0ff}
+.sl-budget b{color:#fff;font-size:.92rem}
+
+
+/* powerup rail */
+.pwbar{display:flex;gap:var(--s2);justify-content:center}
+.pw{position:relative;width:52px;height:46px;padding:0;border-radius:var(--r3);
+  display:grid;place-items:center;color:#d8c6ff;
+  background:linear-gradient(180deg,var(--plum-2,#3d2666),var(--plum,#2d1b4d));
+  border:3px solid var(--ink,#0f0620);
+  box-shadow:0 4px 0 var(--ink,#0f0620), inset 0 2px 0 rgba(255,255,255,.16)}
+.pw:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--ink,#0f0620)}
+
+.pw.armed{color:#07301f;background:linear-gradient(180deg,var(--mint-2,#a8ffe0),var(--mint,#6affc4));
+  box-shadow:0 4px 0 var(--mint-dk,#16b98a), inset 0 2px 0 rgba(255,255,255,.5)}
+.pwn{position:absolute;top:-7px;right:-6px;min-width:19px;height:19px;border-radius:999px;
+  background:#fff;border:2.5px solid var(--ink,#0f0620);color:#3a1f5c;
+  font-family:var(--fd);font-size:.62rem;font-style:normal;
+  display:grid;place-items:center;padding:0 3px}
+.pw:disabled .pwn{background:#8d7ab8;color:#2a1745}
+.cellhint{animation:cellhint 5s ease-out forwards;
+  box-shadow:inset 0 0 0 3px var(--wglow), inset 0 0 18px var(--wglow)}
+@keyframes cellhint{0%,80%{opacity:1}100%{opacity:0}}
 
 /* ---------- overlays ---------- */
 .ov{position:fixed;inset:0;z-index:40;display:none;place-items:center;padding:16px;
@@ -528,6 +585,7 @@ body{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
 
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 @media (min-height:1100px){ .wrap{max-width:560px} .forest{height:130px} }
+@media (max-height:1000px){ .wrap{gap:var(--s2)} .forest{height:72px} }
 @media(max-width:400px){
   .scoreline{font-size:.68rem;padding:6px 10px}
   .scoreline b{font-size:1rem}
@@ -568,21 +626,33 @@ body{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
     <div class="ptitle">Spend your Spores</div></div>
   <div class="balrow">
     <span class="bal">🍄 <b id="balSpores">0</b></span>
-    <span class="bal soon">💎 <b id="balGlow">0</b></span>
+    <span class="bal">💎 <b id="balGlow">0</b></span>
   </div>
   <div class="shopgrid">
     <div class="shopitem"><span class="si">✨</span>
-      <span class="sb"><b>Hint Refill</b><span>Back to 3 hints on the current tangle</span></span>
+      <span class="sb"><b>Hint Refill</b><span>Back to 3 hints on this tangle</span></span>
       <button class="buy pr" data-buy="hints" data-cost="30">🍄 30</button></div>
+    <div class="shopitem"><span class="si">👁</span>
+      <span class="sb"><b>Reveal ×3</b><span>Flashes three correct cells</span></span>
+      <button class="buy pr" data-buy="reveal" data-amt="3" data-cost="45">🍄 45</button></div>
+    <div class="shopitem"><span class="si">⏭</span>
+      <span class="sb"><b>Skip ×1</b><span>Finish at one star. Not on Elders</span></span>
+      <button class="buy pr" data-buy="skip" data-amt="1" data-cost="90">🍄 90</button></div>
+    <div class="shopitem"><span class="si">🍀</span>
+      <span class="sb"><b>Lucky Spore ×3</b><span>Doubles a tangle's Spores</span></span>
+      <button class="buy pr" data-buy="lucky" data-amt="3" data-cost="70">🍄 70</button></div>
+    <div class="shopitem"><span class="si">❄</span>
+      <span class="sb"><b>Time Freeze ×2</b><span>Stalls the clock or the Elder 10s</span></span>
+      <button class="buy gl" data-buy="freeze" data-amt="2" data-cost="2" data-cur="glow">💎 2</button></div>
+    <div class="shopitem"><span class="si">🌸</span>
+      <span class="sb"><b>Bloom Burst ×2</b><span>Completes the shortest pair</span></span>
+      <button class="buy gl" data-buy="bloom" data-amt="2" data-cost="3" data-cur="glow">💎 3</button></div>
     <div class="shopitem"><span class="si">🌟</span>
-      <span class="sb"><b>Golden Trim</b><span>Gild your progress meter, forever</span></span>
+      <span class="sb"><b>Golden Trim</b><span>Gilds your meter, forever</span></span>
       <button class="buy pr" data-buy="gold" data-cost="120">🍄 120</button></div>
-    <div class="shopitem soon"><span class="si">💎</span>
-      <span class="sb"><b>Glowcap Bundles</b><span>Premium currency — coming soon</span></span>
-      <button class="buy" disabled>Soon</button></div>
-    <div class="shopitem soon"><span class="si">📺</span>
-      <span class="sb"><b>Free Spores</b><span>Watch an ad — coming soon</span></span>
-      <button class="buy" disabled>Soon</button></div>
+    <div class="shopitem"><span class="si">🌙</span>
+      <span class="sb"><b>Moonlit Caps</b><span>Silver Sporelings, forever</span></span>
+      <button class="buy gl" data-buy="skin" data-cost="5" data-cur="glow">💎 5</button></div>
   </div>
   <div id="shopMsg"></div>
 </section>
@@ -616,10 +686,14 @@ body{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
   </div>
 
   <div class="scoreline">
-    <span>Strands <b id="mv">0</b></span>
-    <span class="sr">Fed <b id="lc">0</b>/<b id="tc">0</b></span>
-    <span id="goalWrap">3★ <b id="pr">—</b></span>
-    <span class="sr" id="tm">0:00</span>
+    <span class="sl-left">Strands <b id="mv">0</b></span>
+    <span class="sl-rate" id="rateLive" title="Your rating right now — it drops as you use more strands">
+      <svg class="pip" id="pip1" viewBox="0 0 24 24"><path d="M12 2.6l2.9 6.1 6.7.9-4.9 4.7 1.2 6.7L12 17.8 6.1 21l1.2-6.7-4.9-4.7 6.7-.9z"/></svg>
+      <svg class="pip" id="pip2" viewBox="0 0 24 24"><path d="M12 2.6l2.9 6.1 6.7.9-4.9 4.7 1.2 6.7L12 17.8 6.1 21l1.2-6.7-4.9-4.7 6.7-.9z"/></svg>
+      <svg class="pip" id="pip3" viewBox="0 0 24 24"><path d="M12 2.6l2.9 6.1 6.7.9-4.9 4.7 1.2 6.7L12 17.8 6.1 21l1.2-6.7-4.9-4.7 6.7-.9z"/></svg>
+    </span>
+    <span class="sl-budget" id="goalWrap"><span class="stake"></span><b id="pr">0</b></span>
+    <span class="sr" id="lc">0</span><span class="sr" id="tc">0</span><span class="sr" id="tm">0:00</span>
   </div>
   <div class="meter"><i id="meter"></i></div>
   <div id="bossbar" class="bossbar" hidden>
@@ -643,6 +717,24 @@ body{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
     <svg class="corner br" viewBox="0 0 40 40"><path d="M6 34 C6 16 16 6 34 6" stroke="#0f0620" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M6 34 C6 16 16 6 34 6" stroke="var(--gold-2)" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/><circle cx="34" cy="6" r="5" fill="var(--pink)" stroke="#0f0620" stroke-width="2.5"/></svg>
   </div>
 
+  <div class="dock">
+  <div class="pwbar" id="pwbar">
+    <button class="pw" data-pw="reveal" title="Reveal — flash three correct cells">
+      <svg viewBox="0 0 24 24" class="gly"><path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6-10-6-10-6z"/><circle cx="12" cy="12" r="2.6"/></svg>
+      <i class="pwn" id="pwReveal">0</i></button>
+    <button class="pw" data-pw="bloom" title="Bloom Burst — finish the shortest pair">
+      <svg viewBox="0 0 24 24" class="gly"><path d="M12 4a4 4 0 0 1 4 4 4 4 0 0 1-4 4 4 4 0 0 1-4-4 4 4 0 0 1 4-4z"/><path d="M12 12v8M8 20h8"/></svg>
+      <i class="pwn" id="pwBloom">0</i></button>
+    <button class="pw" data-pw="freeze" title="Time Freeze — stall the clock or the Elder">
+      <svg viewBox="0 0 24 24" class="gly"><path d="M12 3v18M4.5 7.5l15 9M19.5 7.5l-15 9"/></svg>
+      <i class="pwn" id="pwFreeze">0</i></button>
+    <button class="pw" data-pw="lucky" title="Lucky Spore — double this tangle's Spores">
+      <svg viewBox="0 0 24 24" class="gly"><path d="M6 15a6 6 0 0 1 12 0z"/><path d="M11 15v5M13 15v4"/><circle cx="10" cy="11" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="10.5" r="1" fill="currentColor" stroke="none"/></svg>
+      <i class="pwn" id="pwLucky">0</i></button>
+    <button class="pw" data-pw="skip" title="Skip — finish at one star">
+      <svg viewBox="0 0 24 24" class="gly"><path d="M5 5l9 7-9 7zM17 5v14"/></svg>
+      <i class="pwn" id="pwSkip">0</i></button>
+  </div>
   <div class="ctl">
     <button id="undo"><svg viewBox="0 0 24 24" class="gly"><path d="M4 9h9a5 5 0 0 1 0 10h-3"/><path d="M7 5 3.5 9 7 13"/></svg>Undo</button>
     <button id="hint"><svg viewBox="0 0 24 24" class="gly"><path d="M12 3.5l1.7 4.3 4.3 1.7-4.3 1.7L12 15.5l-1.7-4.3L6 9.5l4.3-1.7z"/><path d="M18 16l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z"/></svg>Hint</button>
@@ -652,6 +744,7 @@ body{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
   <div class="tick">
     <span>New tangle in <b id="cd">—</b></span>
     <span id="hintsLeft">Hints 3</span>
+  </div>
   </div>
 
   <footer>Made 2026 · free, no signup · grows right in your browser</footer>
@@ -822,6 +915,7 @@ window.bubbleText=function(str,opts){
     '</svg>';
   return svg;
 };
+  if(window.fitBoard){ window.fitBoard(); setTimeout(window.fitBoard,300); }
 })();
 
 </script>
@@ -914,6 +1008,7 @@ var G=null,N=7,paths=[],lockedP=[],moves=0,done=false,undoS=[],hintsLeft=3,activ
 var t0=0,timer=null,elapsed=0,mode="daily",curKey="",curNo=0,endlessSeed=0;
 var curW=1,curL=1,isTimed=false,timeLimit=0,timeLeft=0;
 var isBoss=false,atkEvery=9000,nextAtk=0;
+var luckyOn=false,freezeUntil=0,lastSpores=0,lastGlow=0;
 var board=$("#board");
 
 function idx(x,y){return y*N+x}
@@ -1046,12 +1141,21 @@ function paint(surge){
   var ratio=G?n/(N*N):0, pd=0;
   if(G) for(var k3=0;k3<G.K;k3++) if(pairDone(k3)) pd++;
   $("#lc").textContent=n; $("#tc").textContent=N*N; $("#mv").textContent=moves;
+  if(G){
+    var TH2=thresholds(G.par), live = isTimed ? 3 : (moves<=TH2.t3?3:moves<=TH2.t2?2:1);
+    for(var pi=1;pi<=3;pi++){
+      var pel=document.getElementById("pip"+pi); if(!pel) continue;
+      pel.classList.toggle("lit", pi<=live);
+      pel.classList.toggle("spent", pi>live);
+    }
+  }
   $("#meter").style.width=(ratio*100).toFixed(1)+"%";
   setHue(ratio);
   document.body.style.setProperty("--amb",(.30+.70*ratio).toFixed(2));
   $("#undo").disabled=!undoS.length||done;
   $("#hint").disabled=hintsLeft<=0||done;
   $("#hintsLeft").textContent="Hints "+hintsLeft;
+  if(typeof refreshPw==="function") refreshPw();
   if(G && n===N*N && pd===G.K && !done){
     done=true; board.classList.add("won"); board.classList.add("shake"); stopTimer();
     buzz([14,50,90,40,120]); if(typeof sfxWin==="function") sfxWin(); flashwave();
@@ -1304,6 +1408,75 @@ function doHint(){
   hintsLeft--; moves+=5; undoS.length=0;
   if(typeof sfxUnlock==="function") sfxUnlock(); paint(true);
 }
+
+/* ---------------- powerups ---------------- */
+function invGet(){ return load().inv||{}; }
+function invSet(k,v){ var s=load(); s.inv=s.inv||{}; s.inv[k]=Math.max(0,v); save(s); refreshPw(); }
+function refreshPw(){
+  var inv=invGet(), map={reveal:"pwReveal",bloom:"pwBloom",freeze:"pwFreeze",lucky:"pwLucky",skip:"pwSkip"};
+  for(var k in map){
+    var el=document.getElementById(map[k]); if(!el) continue;
+    var n=inv[k]||0; el.textContent=n;
+    var btn=el.parentNode;
+    btn.disabled = n<=0 || done;
+    if(k==="skip" && curL==="B") btn.disabled=true;
+    if(k==="lucky") btn.classList.toggle("armed", !!luckyOn);
+    if(k==="freeze") btn.classList.toggle("armed", Date.now()<freezeUntil);
+  }
+}
+function usePw(kind){
+  var inv=invGet(); if((inv[kind]||0)<=0 || done) return;
+  if(kind==="skip" && curL==="B") return;
+  var used=true;
+  if(kind==="reveal"){
+    var shown=0;
+    for(var k=0;k<G.K && shown<3;k++){
+      if(pairDone(k)) continue;
+      var route=G.sol[k];
+      for(var i=0;i<route.length && shown<3;i++){
+        var c=route[i], o=cellOwner();
+        if(o[c]>=0) continue;
+        var el=board.querySelectorAll(".c")[c];
+        if(el){ el.classList.remove("cellhint"); void el.offsetWidth; el.classList.add("cellhint");
+          setTimeout((function(e){return function(){e.classList.remove("cellhint")}})(el),5000); shown++; }
+      }
+    }
+    if(!shown) used=false;
+  } else if(kind==="bloom"){
+    var best=-1,bl=1e9;
+    for(var k2=0;k2<G.K;k2++){ if(pairDone(k2)||lockedP[k2]) continue;
+      if(G.sol[k2].length<bl){ bl=G.sol[k2].length; best=k2; } }
+    if(best<0) used=false;
+    else{
+      for(var i2=0;i2<G.sol[best].length;i2++){
+        var s2=strandAt(G.sol[best][i2]);
+        if(s2&&s2.k!==best&&!lockedP[s2.k]) paths[s2.k]=[];
+      }
+      paths[best]=G.sol[best].slice(); lockedP[best]=true;
+      if(typeof sfxUnlock==="function") sfxUnlock();
+      paint(true);
+    }
+  } else if(kind==="freeze"){
+    freezeUntil=Date.now()+10000;
+    if(isTimed) timeLimit+=10000;
+    if(isBoss) nextAtk+=10000;
+    if(typeof sfxUnlock==="function") sfxUnlock();
+  } else if(kind==="lucky"){
+    if(luckyOn) return; luckyOn=true;
+    if(typeof sfxUnlock==="function") sfxUnlock();
+  } else if(kind==="skip"){
+    for(var k3=0;k3<G.K;k3++) paths[k3]=G.sol[k3].slice();
+    moves=thresholds(G.par).t2+99;
+    paint(true);
+  }
+  if(used) invSet(kind,(invGet()[kind]||0)-1);
+  refreshPw();
+}
+document.addEventListener("click",function(e){
+  var b2=e.target.closest?e.target.closest(".pw"):null;
+  if(b2&&b2.dataset.pw) usePw(b2.dataset.pw);
+});
+
 $("#undo").addEventListener("click",doUndo);
 $("#hint").addEventListener("click",doHint);
 $("#reset").addEventListener("click",function(){ if(done)return;
@@ -1313,7 +1486,13 @@ $("#reset").addEventListener("click",function(){ if(done)return;
 
 /* ---------------- storage / stats ---------------- */
 var LS="relay.v2";
-function load(){try{return JSON.parse(localStorage.getItem(LS))||{}}catch(e){return{}}}
+function load(){
+  var s; try{ s=JSON.parse(localStorage.getItem(LS))||{} }catch(e){ s={} }
+  if(s.spores==null) s.spores=150;
+  if(s.glow==null)   s.glow=0;
+  if(!s.inv) s.inv={reveal:1,skip:0,bloom:0,freeze:0,lucky:0};
+  return s;
+}
 function save(o){try{localStorage.setItem(LS,JSON.stringify(o))}catch(e){}}
 function yKey(){return keyOf(todayUTC()-DAY)}
 
@@ -1337,7 +1516,15 @@ function recordWin(ns){
   s.dist=s.dist||[0,0,0,0]; s.dist[bucket(over)]++;
   if(s.best==null||over<s.best) s.best=over;
   s.stars=(s.stars||0)+ns;
-  s.spores=(s.spores||0)+8+4*ns;
+  var earnS=8+4*ns; if(luckyOn) earnS*=2;
+  s.spores=(s.spores||0)+earnS;
+  var gc=0;
+  if(mode==="level"){
+    if(curL==="B" && ns>=3) gc=3;
+    else if(typeof curL==="string" && curL.charAt(0)==="S") gc=2;
+  }
+  if(gc){ s.glow=(s.glow||0)+gc; lastGlow=gc; } else lastGlow=0;
+  lastSpores=earnS;
   if(mode==="daily"){
     var tk=keyOf(todayUTC());
     if(s.last!==tk){ s.streak=(s.last===yKey())?(s.streak||0)+1:1; s.last=tk; }
@@ -1357,8 +1544,9 @@ function finish(){
   if(ns>=3) r="PERFECT! Three stars. 🍄";
   else if(ns===2) r="Two stars — "+Math.max(1,moves-TH.t3)+" strands past a perfect run. ✨";
   else r="Every Sporeling is awake! Go again for more stars. 🌱";
-  var earned="  +"+(8+4*ns)+" \uD83C\uDF44 Spores";
-  if(mode==="level" && typeof curL==="number" && ns>=3) earned+="  \u00B7  Golden Spore!";
+  var earned="  +"+lastSpores+" \uD83C\uDF44"+(luckyOn?" (x2!)":"");
+  if(lastGlow) earned+="   +"+lastGlow+" \uD83D\uDC8E";
+  if(mode==="level" && typeof curL==="number" && ns>=3) earned+="   Golden Spore!";
   $("#rate").textContent=r+earned;
   $("#again").textContent = mode==="endless" ? "Next board" : "Endless";
   var sc=$("#stars");
@@ -1415,6 +1603,7 @@ $("#again").addEventListener("click",function(){
 function sizeFor(m){ return m==="endless" ? [5,7,7,9][Math.min(3,Math.floor((load().solved||0)/6))%4] : 7 }
 
 function newBoard(){
+  setTimeout(fitBoard,0);
   done=false; moves=0; undoS.length=0; hintsLeft=3; elapsed=0; stopTimer(); t0=0;
   var seed,label,code;
   isTimed=false; isBoss=false; if(mode==="daily"){ curKey=keyOf(todayUTC()); curNo=noOf(todayUTC()); N=7;
@@ -1474,7 +1663,9 @@ function newBoard(){
   $("#pr").textContent = isTimed ? fmt(timeLimit) : TH.t3;
   var gw=$("#goalWrap");
   if(gw){
-    gw.firstChild.nodeValue = isTimed ? "Beat " : "3\u2605 in ";
+    var stake=gw.querySelector(".stake");
+    var wantsSpore = (mode==="level" && typeof curL==="number");
+    if(stake) stake.textContent = wantsSpore ? "\uD83C\uDF44" : "";
     var stake=gw.querySelector(".stake");
     if(!stake){ stake=document.createElement("span"); stake.className="stake"; gw.appendChild(stake); }
     var wantsSpore = (mode==="level" && typeof curL==="number");
@@ -1485,7 +1676,8 @@ function newBoard(){
   }
   $("#modeLabel").textContent=label; $("#gridLabel").textContent=N+" × "+N;
   $("#assetCode").textContent=code;
-  build(); paint(false);
+  luckyOn=false; freezeUntil=0;
+  build(); paint(false); if(typeof refreshPw==="function") refreshPw();
   if(isBoss){
     var mid=board.querySelectorAll(".c")[(N*N)>>1];
     if(mid) popup(mid, (window.WORLDS?window.WORLDS[curW-1].elder:"THE ELDER").toUpperCase()+" WAKES!");
@@ -1562,13 +1754,47 @@ if(!st.seen){
 }
 
 /* ---- bridge: the only things the world screens need from in here ---- */
+/* ---- fit the play column to the viewport ------------------------------
+   The chrome above the board changes height (boss row appears, mode tabs
+   reflow, world reskins), so the board ceiling is measured, not guessed.
+   Without this the fixed tab bar sits on top of the control row.        */
+function fitBoard(){
+  var g=document.getElementById("scGame"), fr=g&&g.querySelector(".frame");
+  if(!fr) return;
+  fr.style.setProperty("--bmax","100%");
+  var bar=document.getElementById("tabbar"), cs=getComputedStyle(g);
+  var gap=parseFloat(cs.rowGap)||0, other=0, n=0;
+  for(var i=0;i<g.children.length;i++){
+    var el=g.children[i];
+    if(el===fr||!el.offsetHeight) continue;
+    other+=el.offsetHeight; n++;
+  }
+  var bs=getComputedStyle(document.body);
+  var chrome=other+gap*n+parseFloat(bs.paddingTop)+(bar?bar.offsetHeight:0)+16;
+  /* --bmax caps frame WIDTH; the square board makes height follow, so the
+     frame's own vertical chrome has to come out of the budget first. */
+  var fs=getComputedStyle(fr), extra=fr.offsetHeight-fr.querySelector("#board").offsetHeight;
+  fr.style.setProperty("--bmax",Math.max(240,Math.round(window.innerHeight-chrome-extra))+"px");
+}
+addEventListener("resize",fitBoard);
+addEventListener("orientationchange",fitBoard);
+window.fitBoard=fitBoard;
+
 window.__game={
-  spend:function(cost){
-    var s=load(); if((s.spores||0)<cost) return -1;
+  spend:function(cost,cur){
+    var s=load();
+    if(cur==="glow"){ if((s.glow||0)<cost) return -1; s.glow-=cost; save(s); return s.glow; }
+    if((s.spores||0)<cost) return -1;
     s.spores-=cost; save(s); return s.spores;
   },
-  balance:function(){ return load().spores||0; },
-  grant:function(what){ if(what==="hints"){ hintsLeft=3; paint(false);} },
+  balance:function(cur){ var s=load(); return cur==="glow"?(s.glow||0):(s.spores||0); },
+  grant:function(what,amt){
+    if(what==="hints"){ hintsLeft=3; paint(false); return; }
+    if(what==="gold"||what==="skin") return;
+    var s=load(); s.inv=s.inv||{}; s.inv[what]=(s.inv[what]||0)+(amt||1); save(s);
+    if(typeof refreshPw==="function") refreshPw();
+  },
+  inv:function(){ return load().inv||{}; },
   toggleMute:function(){ muted=!muted; return muted; },
   debugState:function(){ return G?{pairs:G.pairs,sol:G.sol,K:G.K,N:N}:null; },
   debugSolve:function(){ if(!G) return;
@@ -2434,6 +2660,8 @@ if(window.__decorateHeaders) window.__decorateHeaders(null);
   function renderStore(){
     var b=document.getElementById("balSpores");
     if(b&&window.__game) b.textContent=window.__game.balance();
+    var g=document.getElementById("balGlow");
+    if(g&&window.__game) g.textContent=window.__game.balance("glow");
     var st=document.getElementById("storeTitle");
     if(st&&window.bubbleText&&!st.firstChild)
       st.innerHTML='<svg class="plate" viewBox="0 0 300 74" preserveAspectRatio="none">'+
@@ -2451,18 +2679,25 @@ if(window.__decorateHeaders) window.__decorateHeaders(null);
     setTimeout(function(){setTab("tabPlay")},400); });
   Array.prototype.forEach.call(document.querySelectorAll("[data-buy]"),function(btn){
     btn.addEventListener("click",function(){
-      var cost=+btn.dataset.cost, what=btn.dataset.buy, msg=document.getElementById("shopMsg");
-      var left=window.__game.spend(cost);
-      if(left<0){ if(msg) msg.textContent="Not enough Spores — win tangles to earn more!"; return; }
-      if(what==="hints") window.__game.grant("hints");
+      var cost=+btn.dataset.cost, what=btn.dataset.buy, cur=btn.dataset.cur||"spores";
+      var amt=+(btn.dataset.amt||1), msg=document.getElementById("shopMsg");
+      var left=window.__game.spend(cost,cur);
+      if(left<0){ if(msg) msg.textContent = cur==="glow"
+        ? "Not enough Glowcaps — 3-star an Elder or clear a secret ring."
+        : "Not enough Spores — win tangles to earn more."; return; }
       if(what==="gold"){
-        document.getElementById("meter").firstElementChild&&0;
         document.querySelector(".meter i").style.background="linear-gradient(90deg,#ffd84d,#ffb31c)";
         try{ var s=JSON.parse(localStorage.getItem("relay.v2"))||{}; s.gold=1; localStorage.setItem("relay.v2",JSON.stringify(s)); }catch(e){}
+        btn.disabled=true; btn.textContent="Owned"; btn.classList.add("owned");
+      } else if(what==="skin"){
+        try{ var s2=JSON.parse(localStorage.getItem("relay.v2"))||{}; s2.skin="moon"; localStorage.setItem("relay.v2",JSON.stringify(s2)); }catch(e){}
+        document.documentElement.style.setProperty("--capskin","#dfe8ff");
+        btn.disabled=true; btn.textContent="Owned"; btn.classList.add("owned");
+      } else {
+        window.__game.grant(what,amt);
       }
-      if(msg) msg.textContent="Bought! 🍄 "+left+" left";
+      if(msg) msg.textContent="Bought!";
       renderStore();
-      if(window.__game && typeof window.__game.sfx==="function") window.__game.sfx();
     });
   });
   var mb=document.getElementById("muteBtn");
