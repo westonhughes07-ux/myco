@@ -402,6 +402,25 @@ footer{font-size:.7rem;font-weight:600;color:#b9a4ee;text-align:center;line-heig
 
 
 
+
+/* ---------- INVITES ---------- */
+.invstep{margin:var(--s3) 0 var(--s2);font-size:.78rem;font-weight:700;color:#4a3a22;text-align:left;line-height:1.4}
+.invstep b{color:#2a1745}
+.invrow{display:flex;gap:var(--s2)}
+.invrow input{flex:1;min-width:0;padding:var(--s2) var(--s3);border-radius:13px;
+  font-family:var(--fb);font-size:.78rem;font-weight:800;color:#efe6ff;
+  background:linear-gradient(180deg,#33204f,#241436);
+  border:3px solid var(--ink,#0f0620);box-shadow:inset 0 2px 0 rgba(0,0,0,.4)}
+.invrow input::placeholder{color:#8d7ab8}
+.invrow button{flex:0 0 auto;padding:var(--s2) var(--s4);border-radius:13px;
+  font-size:.8rem;font-weight:900;color:#07301f;
+  background:linear-gradient(180deg,var(--mint-2,#a8ffe0),var(--mint,#6affc4));
+  border:3px solid var(--ink,#0f0620);box-shadow:0 4px 0 var(--ink,#0f0620)}
+.invrow button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink,#0f0620)}
+.invmsg{margin-top:var(--s2);min-height:1.2em;font-size:.76rem;font-weight:800;color:#2f7d5c;text-align:center}
+.invmsg.bad{color:#c23b6a}
+.invmine{margin-top:var(--s4);padding-top:var(--s3);border-top:3px solid rgba(42,23,69,.18)}
+
 /* ---------- ADS + IAP ---------- */
 .rw{width:100%;margin:var(--s2) 0 0;padding:var(--s2) var(--s3);border-radius:15px;
   display:flex;align-items:center;justify-content:center;gap:var(--s2);
@@ -889,6 +908,22 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
   <div id="msg"></div>
 </div></div>
 
+<div class="ov" id="invov"><div class="cd">
+  <button class="x" data-close>✕</button>
+  <h2 id="invTitle"></h2>
+  <div class="tg">Both of you get Glowcaps</div>
+  <div class="invstep"><b>1.</b> Send a friend your grove link.</div>
+  <div class="invrow"><input id="invLink" readonly><button id="invCopy">Copy</button></div>
+  <div class="invstep"><b>2.</b> When they clear the first grove their game gives them
+    a thank-you code. Paste it here.</div>
+  <div class="invrow"><input id="invIn" placeholder="THANK-YOU CODE" autocomplete="off"><button id="invClaim">Claim</button></div>
+  <div class="invmsg" id="invMsg"></div>
+  <div class="invmine" id="invMine" hidden>
+    <div class="invstep"><b>Your thank-you code</b> — send this back to whoever invited you.</div>
+    <div class="invrow"><input id="invThanks" readonly><button id="invTCopy">Copy</button></div>
+  </div>
+</div></div>
+
 <div class="ov" id="adov"><div class="cd adcd">
   <div class="adnote">Sponsor break</div>
   <div class="adring"><b id="adCount">5</b></div>
@@ -927,6 +962,7 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
   <button class="x" data-close>✕</button>
   <h2 id="statsTitle"></h2><div class="tg">Saved on this device</div>
   <button class="big" id="openDailyBtn">Daily rewards</button>
+  <button class="big" id="openInvBtn">Invite a friend</button>
   <div class="sc">
     <div><b id="sPlayed">0</b><span>Solved</span></div>
     <div><b id="sStreak">0</b><span>Streak</span></div>
@@ -1907,6 +1943,68 @@ if(!st.seen){
 }
 
 /* ---- bridge: the only things the world screens need from in here ---- */
+/* ================= INVITES ===============================================
+   There is no backend, so a server cannot tell a referrer their friend
+   showed up. Rather than fake that, invites use a two-way code handshake
+   that genuinely works offline:
+     1. You share a link carrying YOUR code.
+     2. Your friend opens it, plays, and on clearing World 1 their game mints
+        a thank-you code that only their device could produce for YOUR code.
+     3. They send it back; your game verifies it and pays you.
+   This is client-side, so it is tamper-resistant, not tamper-proof - hence
+   the cap. Rewards are soft currency only, so the downside is bounded. */
+var INV_SALT="myco-invite-v1", INV_CAP=10, INV_PAY=25, INV_WELCOME=50;
+function b36(n){ return (n>>>0).toString(36).toUpperCase() }
+function myCode(){
+  var s=load();
+  if(!s.uid){ s.uid=(b36(Math.floor(Math.random()*1e9))+b36((Date.now()%1e6)|0)).slice(0,6); save(s) }
+  return s.uid;
+}
+function invSig(a){ return b36(hash(a+"|"+INV_SALT)).slice(0,5) }
+function inviteLink(){
+  var base=location.origin+location.pathname;
+  return base+"?ref="+myCode();
+}
+/* minted by the INVITEE once they clear World 1 */
+function thanksCode(){
+  var s=load(); if(!s.refBy) return null;
+  var me=myCode();
+  return me+"-"+invSig(s.refBy+"|"+me);
+}
+/* verified by the REFERRER */
+function claimInvite(entered){
+  var code=String(entered||"").trim().toUpperCase();
+  var i=code.lastIndexOf("-");
+  if(i<1) return {ok:false,why:"That doesn't look like a thank-you code."};
+  var friend=code.slice(0,i), sig=code.slice(i+1);
+  var s=load();
+  if(friend===myCode()) return {ok:false,why:"That's your own code."};
+  if(invSig(myCode()+"|"+friend)!==sig) return {ok:false,why:"That code isn't for you."};
+  s.invClaimed=s.invClaimed||{};
+  if(s.invClaimed[friend]) return {ok:false,why:"Already claimed for that friend."};
+  if(Object.keys(s.invClaimed).length>=INV_CAP) return {ok:false,why:"Invite rewards are capped at "+INV_CAP+"."};
+  s.invClaimed[friend]=1;
+  s.glow=(s.glow||0)+INV_PAY;
+  save(s);
+  return {ok:true,glow:s.glow,pay:INV_PAY};
+}
+/* an arriving invitee is only tagged if they are genuinely new */
+function catchRef(){
+  var m=/[?&]ref=([A-Z0-9]{4,10})/i.exec(location.search);
+  if(!m) return false;
+  var s=load(), code=m[1].toUpperCase();
+  if(s.refBy||s.solved>0||s.uid===code) return false;
+  s.refBy=code; s.spores=(s.spores||0)+INV_WELCOME; save(s);
+  return true;
+}
+function world1Done(){
+  try{
+    var P=window.__grove?window.__grove.get():null; if(!P) return false;
+    for(var l=1;l<=8;l++){ if(!(P.stars["1-"+l]>0)) return false }
+    return true;
+  }catch(e){ return false }
+}
+
 /* ================= ADS + IAP SCAFFOLDING =================================
    NO AD NETWORK AND NO PAYMENT PROCESSOR ARE WIRED. What ships here is the
    pacing logic, the reward plumbing and the surfaces - the parts that are
@@ -2134,6 +2232,8 @@ function fitBoard(){
 addEventListener("resize",fitBoard);
 addEventListener("orientationchange",fitBoard);
 window.fitBoard=fitBoard;
+window.__inv={code:myCode,link:inviteLink,thanks:thanksCode,claim:claimInvite,
+  catchRef:catchRef,w1:world1Done,cap:INV_CAP,pay:INV_PAY};
 window.__ads={shouldInt:shouldInterstitial,noteClear:noteClear,removed:adsRemoved,
   play:playAd,rewarded:rewarded,tapIap:tapIap,iap:IAP,net:function(){return AD_NET}};
 window.__daily={open:openDaily,claim:claimDaily,roll:function(){return dailyRoll(load())},
@@ -2239,6 +2339,7 @@ window.__cityLight(saved);
   set("dailyTitle","DAILY",{fill:"#ffe89a",fill2:"#ffb31c",outline:"#0f0620",extrude:"#b06a00"});
   set("cbTitle","WELCOME BACK",{fill:"#c9b3ff",fill2:"#7b4dff",outline:"#0f0620",extrude:"#3a1f8f"});
   set("iapTitle","SOON",{fill:"#ffe89a",fill2:"#ffb31c",outline:"#0f0620",extrude:"#b06a00"});
+  set("invTitle","INVITE",{fill:"#a8ffe0",fill2:"#16b98a",outline:"#0f0620",extrude:"#0b6d51"});
 })();
 
 </script>
@@ -3083,6 +3184,51 @@ if(window.__decorateHeaders) window.__decorateHeaders(null);
     if(s0.gold) document.querySelector(".meter i").style.background="linear-gradient(90deg,#ffd84d,#ffb31c)"; }catch(e){}
   if(window.fitBoard){ window.fitBoard(); setTimeout(window.fitBoard,300); }
 
+
+
+  /* ---- invites ---- */
+  (function(){
+    var I=window.__inv; if(!I) return;
+    var welcomed=I.catchRef();
+    function paint(){
+      var L=document.getElementById("invLink"); if(L) L.value=I.link();
+      var t=I.thanks(), mine=document.getElementById("invMine");
+      /* the thank-you code only exists once the invitee has actually cleared World 1 */
+      if(mine){
+        var earned = t && I.w1();
+        mine.hidden=!earned;
+        if(earned) document.getElementById("invThanks").value=t;
+      }
+    }
+    function copy(id,btn){
+      var el=document.getElementById(id); if(!el) return;
+      el.select && el.select();
+      try{ navigator.clipboard.writeText(el.value) }catch(e){ try{ document.execCommand("copy") }catch(e2){} }
+      var was=btn.textContent; btn.textContent="Copied"; setTimeout(function(){btn.textContent=was},1200);
+    }
+    var ib=document.getElementById("openInvBtn");
+    if(ib) ib.addEventListener("click",function(){
+      var s=document.getElementById("sov"); if(s) s.classList.remove("on");
+      paint(); document.getElementById("invov").classList.add("on");
+    });
+    var c1=document.getElementById("invCopy");  if(c1) c1.addEventListener("click",function(){copy("invLink",c1)});
+    var c2=document.getElementById("invTCopy"); if(c2) c2.addEventListener("click",function(){copy("invThanks",c2)});
+    var cl=document.getElementById("invClaim");
+    if(cl) cl.addEventListener("click",function(){
+      var r=I.claim(document.getElementById("invIn").value);
+      var m=document.getElementById("invMsg");
+      m.classList.toggle("bad",!r.ok);
+      m.textContent = r.ok ? ("+"+r.pay+" Glowcaps. Thank your friend.") : r.why;
+      if(r.ok){
+        document.getElementById("invIn").value="";
+        var bg=document.getElementById("balGlow"); if(bg) bg.textContent=r.glow;
+      }
+    });
+    if(welcomed) setTimeout(function(){
+      var m=document.getElementById("shopMsg");
+      if(m) m.textContent="Invited by a friend — 50 Spores added.";
+    },600);
+  })();
 
   /* ---- ads + IAP surfaces (no network, no processor - see AD_NET) ---- */
   (function(){
