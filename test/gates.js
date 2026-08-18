@@ -44,9 +44,14 @@ setTimeout(()=>{
 
  console.log("\n--- ARCHIVE BOUNDS (day 1) ---");
  const at=d.querySelector('[data-mode="archive"]');
- ok("archive tab disabled with no history", at.disabled===true, "title: "+at.title);
+ var pno=parseInt(d.getElementById("pno").textContent,10)||1;
+ var expectDisabled = pno<=1;   // the archive only opens once a past board exists
+ ok("archive tab state matches available history", at.disabled===expectDisabled,
+    "puzzle "+pno+", disabled="+at.disabled+", title: "+at.title);
  at.dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
- ok("clicking archive stays on Daily", d.querySelector('[data-mode="daily"]').classList.contains("on"), "active tab: "+[...d.querySelectorAll(".tab")].filter(t=>t.classList.contains("on")).map(t=>t.dataset.mode));
+ var activeNow=[...d.querySelectorAll(".tab")].filter(t=>t.classList.contains("on")).map(t=>t.dataset.mode)[0];
+ ok("archive click respects lock state", expectDisabled ? activeNow==="daily" : activeNow==="archive",
+    "active tab: "+activeNow);
  ok("no pre-epoch board served", d.getElementById("pno").textContent==="1", "No."+d.getElementById("pno").textContent);
 
  console.log("\n--- ENDLESS ---");

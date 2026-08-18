@@ -35,6 +35,7 @@
 }
 *,*::before,*::after{box-sizing:border-box}*{margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
+html{background:#150a26}
 html,body{overflow-x:clip;overscroll-behavior:none}
 body{
   background:
@@ -182,7 +183,22 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 @keyframes won{0%{filter:brightness(2.2) saturate(1.5)}30%{filter:brightness(1.3)}to{filter:none}}
 #board.shake{animation:shk .34s var(--e)}
 @keyframes shk{0%,100%{transform:translate(0,0)}25%{transform:translate(-4px,3px)}60%{transform:translate(4px,-3px)}}
-.pt{position:absolute;width:7px;height:7px;border-radius:50%;background:var(--gold-2);
+
+/* --- exaggerated connect feedback --- */
+.ring{position:absolute;border-radius:50%;pointer-events:none;
+  border:4px solid var(--live2,#a8ffe0);animation:ring .62s cubic-bezier(.15,.85,.3,1) forwards}
+@keyframes ring{0%{opacity:.95;transform:translate(-50%,-50%) scale(.15)}
+ to{opacity:0;transform:translate(-50%,-50%) scale(2.6)}}
+.c.spun svg{animation:squash .32s cubic-bezier(.34,1.6,.5,1)}
+@keyframes squash{0%{transform:scale(1)}30%{transform:scale(1.17,.84)}
+ 60%{transform:scale(.93,1.08)}to{transform:scale(1)}}
+.c.pulse{animation:tilepulse .5s cubic-bezier(.34,1.5,.5,1)}
+@keyframes tilepulse{0%{transform:scale(1)}35%{transform:scale(1.19)}to{transform:scale(1)}}
+.flashwave{position:fixed;inset:0;pointer-events:none;z-index:44;
+  background:radial-gradient(circle at 50% 55%,var(--live2,#a8ffe0) 0%,transparent 55%);
+  opacity:0;animation:fw .42s ease-out forwards}
+@keyframes fw{0%{opacity:.28}to{opacity:0}}
+.pt{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--gold-2);
   border:2px solid var(--outline);pointer-events:none}
 .bloom{position:absolute;inset:-20%;pointer-events:none;border-radius:50%;
   background:radial-gradient(circle,rgba(255,224,106,.65) 0%,transparent 65%);
@@ -216,6 +232,92 @@ button.pr:active{box-shadow:0 0 0 var(--lime-dk), inset 0 3px 0 rgba(255,255,255
   text-shadow:0 2px 0 rgba(42,19,112,.5)}
 .tick b{font-weight:800;color:var(--gold-2);}
 footer{font-size:.7rem;font-weight:600;color:#b9a4ee;text-align:center;line-height:1.7}
+
+
+/* ================= SCREENS ================= */
+.screen{display:none;width:100%;flex-direction:column;gap:10px}
+.screen.on{display:flex}
+.navrow{display:flex;align-items:center;gap:8px}
+.back{flex:0 0 auto;width:46px;height:46px;padding:0;border-radius:50%;display:grid;place-items:center;font-size:1.1rem}
+
+/* heading plate: bubble letters sitting ON a drawn banner, not floating */
+.hplate{position:relative;padding:14px 10px 8px;text-align:center}
+.hplate svg.plate{position:absolute;inset:0;width:100%;height:100%}
+.hplate .bt{position:relative;height:44px;margin:0 auto}
+.hplate .ptitle{position:relative;font-size:.8rem;font-weight:700;color:#d9c6ff;margin-top:4px}
+
+/* ================= WORLD SELECT ================= */
+#worldList{display:flex;flex-direction:column;gap:11px}
+.wcard{display:block;width:100%;padding:0;overflow:hidden;text-align:left;
+  border-radius:20px;border:4px solid var(--outline);background:var(--grape-1);
+  box-shadow:0 6px 0 var(--outline), inset 0 2px 0 rgba(255,255,255,.16)}
+.wcard:active:not(:disabled){transform:translateY(5px);box-shadow:0 1px 0 var(--outline)}
+.wart{position:relative;height:104px;overflow:hidden;border-bottom:4px solid var(--outline)}
+.wart svg{width:100%;height:100%;display:block}
+.wbody{padding:9px 13px 11px}
+.wname{font-size:1.12rem;font-weight:800;color:#fff;line-height:1.1}
+.wflav{font-size:.76rem;font-weight:600;color:#c3aef0;margin-top:1px}
+.wrow{display:flex;gap:10px;align-items:center;margin-top:7px;font-size:.78rem;font-weight:800}
+.wstars{color:var(--gold-2)} .wspore{color:var(--pink)}
+.wrow em{font-style:normal;opacity:.55;font-weight:700}
+.wlock{margin-left:auto;font-size:1rem}
+.wcard.locked{filter:saturate(.25) brightness(.62)}
+.wcard.locked .wart::after{content:"";position:absolute;inset:0;background:rgba(10,4,22,.55)}
+
+/* ================= LEVEL MAP ================= */
+#levelMap{position:relative}
+.lmapwrap{position:relative;width:100%}
+.lmap{width:100%;display:block}
+.lv{position:absolute;transform:translate(-50%,-50%);width:60px;height:60px;padding:0;
+  border-radius:50%;display:grid;place-items:center;
+  background:linear-gradient(180deg,var(--violet),var(--violet-dk));
+  border:4px solid var(--outline);
+  box-shadow:0 5px 0 var(--outline), inset 0 3px 0 rgba(255,255,255,.3)}
+.lv:active:not(:disabled){transform:translate(-50%,-50%) translateY(4px);box-shadow:0 1px 0 var(--outline)}
+.lnum{font-size:1.3rem;font-weight:800;color:#fff;text-shadow:0 2px 0 rgba(15,6,32,.7);line-height:1}
+.lv.done{background:linear-gradient(180deg,var(--gold-2),var(--gold));box-shadow:0 5px 0 var(--gold-dk), inset 0 3px 0 rgba(255,255,255,.5)}
+.lv.done .lnum{color:#07331f;text-shadow:none}
+.lv.locked{filter:saturate(.2) brightness(.6)}
+.lv.secret{background:linear-gradient(180deg,#ffe89a,#ffb31c);box-shadow:0 5px 0 #b06a00, inset 0 3px 0 rgba(255,255,255,.5)}
+.lv.secret .lnum{color:#4a2a00;text-shadow:none}
+.lv.boss{width:78px;height:78px;background:linear-gradient(180deg,#ff8ec4,var(--pink));
+  box-shadow:0 6px 0 var(--magenta-dk,#c02a6e), inset 0 3px 0 rgba(255,255,255,.4)}
+.bossface svg{width:46px;height:46px;display:block}
+.lstars{position:absolute;bottom:-13px;left:50%;transform:translateX(-50%);
+  display:flex;gap:1px;font-size:.62rem;white-space:nowrap}
+.ms{color:#3a2a5e;text-shadow:0 1px 0 rgba(0,0,0,.4)} .ms.on{color:var(--gold-2)}
+.llock{font-size:1.1rem}
+.lspore{position:absolute;top:-8px;right:-6px;font-size:.85rem;filter:drop-shadow(0 2px 0 rgba(15,6,32,.6))}
+.lreq,.lname{position:absolute;transform:translateX(-50%);font-size:.63rem;font-weight:700;
+  color:#b9a4e8;white-space:nowrap;text-shadow:0 2px 0 rgba(15,6,32,.8);pointer-events:none}
+.lname{color:var(--gold-2)}
+
+/* ================= LIVING SCENE (behind the board) ================= */
+.scene{position:absolute;inset:0;overflow:hidden;border-radius:11px;pointer-events:none;z-index:0}
+.scene svg{position:absolute;bottom:0;width:100%;display:block}
+.scene .far{opacity:.30} .scene .mid{opacity:.5}
+#board > *{position:relative;z-index:1}
+.ff{position:absolute;width:5px;height:5px;border-radius:50%;
+  background:var(--gold-2);box-shadow:0 0 8px 2px var(--gold-2);opacity:.9}
+@keyframes flit{
+  0%{transform:translate(0,0)}      25%{transform:translate(22px,-16px)}
+  50%{transform:translate(-14px,-30px)} 75%{transform:translate(-26px,-10px)}
+  100%{transform:translate(0,0)}}
+@keyframes blinky{0%,100%{opacity:.15}45%{opacity:1}}
+.critter{position:absolute;bottom:4px;will-change:transform}
+@keyframes walk{from{transform:translateX(-14%)}to{transform:translateX(114%)}}
+@keyframes bobble{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-4px) rotate(3deg)}}
+.critter svg{width:30px;height:30px;animation:bobble 1.1s ease-in-out infinite}
+
+/* ================= ORGANIC BORDERS ================= */
+.frame{position:relative}
+.frame .corner{position:absolute;width:34px;height:34px;pointer-events:none;z-index:3}
+.frame .corner.tl{top:-13px;left:-11px}
+.frame .corner.tr{top:-13px;right:-11px;transform:scaleX(-1)}
+.frame .corner.bl{bottom:-13px;left:-11px;transform:scaleY(-1)}
+.frame .corner.br{bottom:-13px;right:-11px;transform:scale(-1,-1)}
+.vineband{position:absolute;left:0;right:0;height:14px;pointer-events:none;z-index:3}
+.vineband.top{top:-9px} .vineband.bot{bottom:-9px;transform:scaleY(-1)}
 
 /* ---------- overlays ---------- */
 .ov{position:fixed;inset:0;z-index:40;display:none;place-items:center;padding:16px;
@@ -280,6 +382,30 @@ footer{font-size:.7rem;font-weight:600;color:#b9a4ee;text-align:center;line-heig
 <body>
 
 <div class="wrap">
+<!-- ============ WORLD SELECT ============ -->
+<section class="screen" id="scWorlds">
+  <div class="hplate"><div id="worldsTitle"></div>
+    <div class="ptitle">Six groves. Wake them all.</div></div>
+  <div id="worldList"></div>
+  <div class="ctl"><button id="toDaily">🍄 Daily tangle</button></div>
+</section>
+
+<!-- ============ LEVEL MAP ============ -->
+<section class="screen" id="scLevels">
+  <div class="navrow">
+    <button class="back" id="backWorlds" aria-label="Back to groves">←</button>
+    <div style="flex:1;text-align:center">
+      <div id="worldTitle" style="font-size:1.15rem;font-weight:800"></div>
+      <div id="worldFlavor" style="font-size:.74rem;font-weight:600;color:#c3aef0"></div>
+    </div>
+    <div style="width:46px"></div>
+  </div>
+  <div id="levelMap"></div>
+</section>
+
+<!-- ============ GAME ============ -->
+<section class="screen on" id="scGame">
+
   <header class="topbar">
     <button class="icon" id="help" aria-label="How to play" title="How to play">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9a3 3 0 1 1 4.2 2.8c-.8.4-1.3 1.1-1.3 2v.4"/><circle cx="12" cy="17.7" r="1.3" fill="currentColor" stroke="none"/></svg>
@@ -320,15 +446,21 @@ footer{font-size:.7rem;font-weight:600;color:#b9a4ee;text-align:center;line-heig
 
   <div class="frame">
     <span class="fl" id="gridLabel">7 × 7</span>
+    <div class="scene" id="scene" aria-hidden="true"></div>
     <div id="board" role="grid" aria-label="Mycelium grid"></div>
     <div id="fx" aria-hidden="true"></div>
     <span class="fr" id="assetCode"></span>
+    <svg class="corner tl" viewBox="0 0 40 40"><path d="M6 34 C6 16 16 6 34 6" stroke="#0f0620" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M6 34 C6 16 16 6 34 6" stroke="var(--gold-2)" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/><circle cx="34" cy="6" r="5" fill="var(--pink)" stroke="#0f0620" stroke-width="2.5"/><circle cx="6" cy="34" r="4" fill="var(--gold-2)" stroke="#0f0620" stroke-width="2.5"/></svg>
+    <svg class="corner tr" viewBox="0 0 40 40"><path d="M6 34 C6 16 16 6 34 6" stroke="#0f0620" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M6 34 C6 16 16 6 34 6" stroke="var(--gold-2)" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/><circle cx="34" cy="6" r="5" fill="var(--pink)" stroke="#0f0620" stroke-width="2.5"/></svg>
+    <svg class="corner bl" viewBox="0 0 40 40"><path d="M6 34 C6 16 16 6 34 6" stroke="#0f0620" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M6 34 C6 16 16 6 34 6" stroke="var(--gold-2)" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/><circle cx="34" cy="6" r="5" fill="var(--gold-2)" stroke="#0f0620" stroke-width="2.5"/></svg>
+    <svg class="corner br" viewBox="0 0 40 40"><path d="M6 34 C6 16 16 6 34 6" stroke="#0f0620" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M6 34 C6 16 16 6 34 6" stroke="var(--gold-2)" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/><circle cx="34" cy="6" r="5" fill="var(--pink)" stroke="#0f0620" stroke-width="2.5"/></svg>
   </div>
 
   <div class="ctl">
     <button id="undo">↶ Undo</button>
     <button id="hint">✨ Hint</button>
     <button id="reset">↺ Reset</button>
+    <button id="toWorlds">🗺️</button>
   </div>
 
   <div class="tick">
@@ -337,6 +469,7 @@ footer{font-size:.7rem;font-weight:600;color:#b9a4ee;text-align:center;line-heig
   </div>
 
   <footer>Made 2026 · free, no signup · grows right in your browser</footer>
+</section>
 </div>
 
 <div class="conf" id="conf" aria-hidden="true"></div>
@@ -557,6 +690,7 @@ function generate(seedStr,N){
 /* ---------------- state ---------------- */
 var G=null,N=7,rotS=[],lit=[],hinted=[],moves=0,done=false,undoS=[],hintsLeft=3;
 var t0=0,timer=null,elapsed=0,mode="daily",curKey="",curNo=0,endlessSeed=0;
+var curW=1,curL=1;
 var board=$("#board");
 
 function idx(x,y){return y*N+x}
@@ -635,6 +769,23 @@ function burst(el,count){
     })(p);
   }
 }
+
+function ring(el){
+  if(!fx) return;
+  var b=fx.getBoundingClientRect(), r=el.getBoundingClientRect();
+  var d=document.createElement("i"); d.className="ring";
+  var s=Math.max(r.width,r.height);
+  d.style.left=(r.left-b.left+r.width/2)+"px";
+  d.style.top=(r.top-b.top+r.height/2)+"px";
+  d.style.width=s+"px"; d.style.height=s+"px";
+  fx.appendChild(d);
+  setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d) },700);
+}
+function flashwave(){
+  var f=document.createElement("div"); f.className="flashwave";
+  document.body.appendChild(f);
+  setTimeout(function(){ if(f.parentNode) f.parentNode.removeChild(f) },460);
+}
 function popup(el,txt){
   if(!fx) return;
   var b=fx.getBoundingClientRect(), r=el.getBoundingClientRect();
@@ -653,8 +804,10 @@ function paint(surge){
     el.firstChild.style.transform="rotate("+(rotS[c]*90)+"deg)";
     if(surge&&lit[c]&&!prevLit[c]){
       el.classList.remove("surge"); void el.offsetWidth; el.classList.add("surge");
+      el.classList.remove("pulse"); void el.offsetWidth; el.classList.add("pulse");
       gained++; lastEl=el;
-      if(gained<=6) burst(el,4);
+      if(gained<=10) burst(el,7);
+      if(gained<=6) ring(el);
     }
   }
   prevLit=lit.slice();
@@ -667,33 +820,90 @@ function paint(surge){
   $("#hint").disabled=hintsLeft<=0||done;
   $("#hintsLeft").textContent="Hints "+hintsLeft;
 
-  if(gained>=3&&lastEl){ popup(lastEl,"+"+gained+" FED!"); buzz(18);
-    beep(420+Math.min(gained,12)*34,.09); }
-  else if(gained>0){ beep(400+ratio*420,.05) }
+  if(gained>=3&&lastEl){
+    popup(lastEl,"+"+gained+" FED!");
+    buzz([12,28,12]); sfxCascade(gained,ratio); flashwave();
+  } else if(gained>0){ sfxConnect(ratio); }
 
   if(n===N*N&&!done){
     done=true; board.classList.add("won"); board.classList.add("shake"); stopTimer();
-    buzz([14,50,90]);
-    beep(880,.13); setTimeout(function(){beep(1320,.16)},110); setTimeout(function(){beep(1760,.26)},230);
+    buzz([14,50,90,40,120]); sfxWin(); flashwave();
     var cells2=board.children;
-    for(var k=0;k<N*N;k+=Math.max(1,Math.floor(N*N/16))) burst(cells2[k],6);
+    for(var k=0;k<N*N;k+=Math.max(1,Math.floor(N*N/22))) burst(cells2[k],9);
+    for(var k2=0;k2<N*N;k2+=Math.max(1,Math.floor(N*N/7))) ring(cells2[k2]);
     if(fx){ var bl=document.createElement("div"); bl.className="bloom"; fx.appendChild(bl);
       setTimeout(function(){ if(bl.parentNode) bl.parentNode.removeChild(bl) },1000) }
     setTimeout(finish,560);
   }
 }
 
-/* audio */
-var AC=null,muted=false;
-function beep(f,d){ if(muted)return;
-  try{ AC=AC||new (window.AudioContext||window.webkitAudioContext)();
-    var o=AC.createOscillator(),g=AC.createGain();
-    o.type="square";o.frequency.value=f;g.gain.value=.028;
-    o.connect(g);g.connect(AC.destination);o.start();
-    g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);
-    o.stop(AC.currentTime+d);
-  }catch(e){}
+/* ---------------- audio: a small synth, not a beeper ----------------
+   Everything is generated live. No audio files, so nothing to download. */
+var AC=null, muted=false;
+function ac(){
+  try{
+    if(!AC) AC=new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==="suspended") AC.resume();
+  }catch(e){ AC=null }
+  return AC;
 }
+/* pentatonic — any combination of these sounds intentional */
+var SCALE=[0,2,4,7,9,12,14,16,19,21,24,26,28,31,33,36];
+function hz(step){ return 196*Math.pow(2,(SCALE[Math.max(0,Math.min(SCALE.length-1,step))])/12); }
+
+function tone(f,dur,o){
+  o=o||{}; var C=ac(); if(!C||muted) return;
+  var osc=C.createOscillator(), g=C.createGain(), t=C.currentTime+(o.delay||0);
+  osc.type=o.type||"triangle";
+  osc.frequency.setValueAtTime(f,t);
+  if(o.slideTo) osc.frequency.exponentialRampToValueAtTime(o.slideTo,t+dur);
+  var peak=(o.gain||0.16);
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(peak,t+(o.attack||0.012));
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  osc.connect(g); g.connect(C.destination);
+  osc.start(t); osc.stop(t+dur+0.02);
+}
+function sparkle(dur,gain,delay){
+  var C=ac(); if(!C||muted) return;
+  var n=Math.floor(C.sampleRate*dur), buf=C.createBuffer(1,n,C.sampleRate), d=buf.getChannelData(0);
+  for(var i=0;i<n;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/n,3);
+  var src=C.createBufferSource(); src.buffer=buf;
+  var bp=C.createBiquadFilter(); bp.type="highpass"; bp.frequency.value=2600;
+  var g=C.createGain(); g.gain.value=gain||0.06;
+  src.connect(bp); bp.connect(g); g.connect(C.destination);
+  src.start(C.currentTime+(delay||0));
+}
+/* spin: a soft woody tick, pitch varies so repeats never feel identical */
+function sfxSpin(seed){ tone(150+((seed*37)%9)*11, .07, {type:"square", gain:.05, slideTo:110}); }
+/* connect: climbs the scale as the tangle fills — the core reward sound */
+function sfxConnect(ratio){
+  var step=Math.round(ratio*11);
+  tone(hz(step), .3, {type:"triangle", gain:.15});
+  tone(hz(step+3), .26, {type:"sine", gain:.07, delay:.02});
+}
+/* cascade: a whole chord plus a sparkle. Bigger chains sound bigger. */
+function sfxCascade(n,ratio){
+  var b=Math.round(ratio*10);
+  tone(hz(b),   .42,{type:"triangle",gain:.16});
+  tone(hz(b+2), .40,{type:"triangle",gain:.12,delay:.05});
+  tone(hz(b+4), .44,{type:"sine",    gain:.11,delay:.10});
+  if(n>=5) tone(hz(b+7), .5,{type:"sine",gain:.10,delay:.15});
+  sparkle(.5,.05+Math.min(n,8)*.006,.03);
+}
+function sfxWin(){
+  [0,2,4,7,9,12].forEach(function(s,i){
+    tone(hz(s+4), .55, {type:"triangle", gain:.15, delay:i*.085});
+  });
+  sparkle(1.2,.09,.1); sparkle(.9,.06,.42);
+}
+function sfxUnlock(){
+  [0,4,7,12].forEach(function(s,i){ tone(hz(s+5),.5,{type:"sine",gain:.15,delay:i*.1}); });
+  sparkle(.8,.07,.12);
+}
+function sfxDenied(){ tone(150,.22,{type:"sawtooth",gain:.08,slideTo:80}); }
+function sfxTick(){ tone(520,.05,{type:"sine",gain:.05}); }
+function beep(f,d){ tone(f,d||.1,{type:"triangle",gain:.12}); }
 function buzz(ms){ if(navigator.vibrate) try{navigator.vibrate(ms)}catch(e){} }
 
 /* timer */
@@ -707,7 +917,9 @@ function turn(c,dir){
   startTimer();
   undoS.push([c,rotS[c]]); if(undoS.length>200) undoS.shift();
   rotS[c]=(rotS[c]+(dir||1)+4)%4; moves++;
-  beep(330+((c*37)%160),.045); buzz(8);
+  sfxSpin(c); buzz(9);
+  var _el=board.children[c];
+  if(_el){ _el.classList.remove("spun"); void _el.offsetWidth; _el.classList.add("spun") }
   paint(true);
 }
 /* pointerdown = zero tap latency on mobile (no 300ms click delay) */
@@ -725,7 +937,7 @@ document.addEventListener("keydown",function(e){
 });
 
 function doUndo(){ if(done||!undoS.length)return; var p=undoS.pop(); rotS[p[0]]=p[1];
-  moves=Math.max(0,moves-1); beep(220,.05); paint(false) }
+  moves=Math.max(0,moves-1); sfxTick(); paint(false) }
 function doHint(){
   if(done||hintsLeft<=0)return;
   var cand=[];
@@ -738,7 +950,7 @@ function doHint(){
   var pool=near.length?near:cand, pick=pool[Math.floor(Math.random()*pool.length)];
   for(var k=0;k<4;k++) if(rot(G.base[pick],k)===G.solved[pick]){rotS[pick]=k;break}
   hinted[pick]=true; hintsLeft--; moves+=5; undoS.length=0;
-  beep(660,.1); paint(true);
+  sfxUnlock(); paint(true);
 }
 $("#undo").addEventListener("click",doUndo);
 $("#hint").addEventListener("click",doHint);
@@ -795,6 +1007,18 @@ function finish(){
   var ns=starsFor(moves,G.par), sc=$("#stars");
   if(sc){ sc.innerHTML=starSVG(ns>=1)+starSVG(ns>=2)+starSVG(ns>=3); }
   if(ns>=2) confetti();
+  if(mode==="level" && window.__groveRecord){
+    var res=window.__groveRecord(curW,curL,ns);
+    var bits=[];
+    if(res.newSpore) bits.push("🍄 Golden Spore!");
+    if(res.unlockedSecret) bits.push("✨ A secret ring appears…");
+    if(res.unlockedElder) bits.push("☠ The Elder stirs…");
+    if(res.unlockedWorld) bits.push("🗺️ A new grove opens!");
+    if(bits.length){
+      var wt=$("#wtag"); if(wt) wt.innerHTML=bits.join("<br>");
+      if(typeof sfxUnlock==="function") setTimeout(sfxUnlock,650);
+    }
+  }
   refreshStats();
   if(window.__cityLight) window.__cityLight(s.solved||0);
   $("#win").classList.add("on");
@@ -843,6 +1067,17 @@ function newBoard(){
     var ms=EPOCH+(pickNo-1)*DAY;
     curKey=keyOf(ms); curNo=pickNo;
     seed="relay-"+curKey; label="Past tangle #"+pickNo; code="";
+  } else if(mode==="level"){
+    var WW=window.WORLDS[curW-1];
+    N = (curL==="B") ? WW.N+1 : WW.N;
+    var lk = (curL==="S") ? "secret" : (curL==="B") ? "elder" : "l"+curL;
+    seed="myco-w"+curW+"-"+lk;
+    label = (curL==="S") ? WW.secret : (curL==="B") ? WW.elder : WW.name;
+    curNo = (curL==="S") ? "★" : (curL==="B") ? "☠" : curL;
+    code="";
+    document.documentElement.style.setProperty("--wcap",WW.cap);
+    document.documentElement.style.setProperty("--wglow",WW.glow);
+    if(window.__buildScene) window.__buildScene(WW);
   } else { N=sizeFor("endless"); endlessSeed++;
     seed="endless-"+Date.now()+"-"+endlessSeed; curNo="∞";
     label="Endless grove"; code="";
@@ -921,6 +1156,17 @@ if(!st.seen){
     if(c) popup(c,"TAP TO SPIN!");
   },900);
 }
+
+/* ---- bridge: the only things the world screens need from in here ---- */
+window.__game={
+  playLevel:function(w,l){
+    curW=w; curL=l; mode="level";
+    Array.prototype.forEach.call(document.querySelectorAll(".tab"),function(t){t.classList.remove("on")});
+    newBoard();
+  },
+  daily:function(){ setMode("daily"); },
+  scene:function(W){ if(window.__buildScene) window.__buildScene(W); }
+};
 })();
 
 
@@ -980,6 +1226,307 @@ window.__cityLight(saved);
   set("helpTitle","HOW TO PLAY",{fill:"#a8ffe0",fill2:"#16b98a",outline:"#0f0620",extrude:"#0b6d51"});
 })();
 
+</script>
+<script>
+
+/* ============================================================
+   THE GROVE — world / level progression.
+   Six worlds, each with 8 tangles, 1 secret, 1 Elder (boss).
+   Golden Spores drop for 3-star finishes. Collect all 8 in a
+   world and its secret ring reveals itself. Clear all 8 and
+   the Elder wakes up.
+   ============================================================ */
+(function(){
+"use strict";
+
+var WORLDS=[
+ {id:1,name:"Damp Hollow",   flavor:"Where the first spores stir.",        N:5,
+  hue:158,cap:"#ff5fa8",back:"#1d1338",glow:"#6affc4",
+  secret:"The Whispering Ring", elder:"The Elder Cap"},
+ {id:2,name:"Fern Gully",    flavor:"Green light, and something humming.", N:6,
+  hue:96, cap:"#c8ff5f",back:"#16301f",glow:"#b6ff6a",
+  secret:"The Curled Frond",   elder:"Mother Frond"},
+ {id:3,name:"Glowcap Grove", flavor:"The caps here have opinions.",        N:7,
+  hue:300,cap:"#ff8ec4",back:"#2b1140",glow:"#ff7fd4",
+  secret:"The Blushing Hollow",elder:"The Grinning Cap"},
+ {id:4,name:"Rot Cellar",    flavor:"Sweet decay. Mind your step.",        N:7,
+  hue:32, cap:"#ffb347",back:"#33200e",glow:"#ffc861",
+  secret:"The Sunken Larder", elder:"Old Mulch"},
+ {id:5,name:"Spore Peaks",   flavor:"Thin air. The threads freeze.",       N:8,
+  hue:206,cap:"#8ec4ff",back:"#111d3a",glow:"#7fd4ff",
+  secret:"The Frost Ring",     elder:"The Pale Watcher"},
+ {id:6,name:"Deep Mycelium", flavor:"Everything is one thread down here.", N:9,
+  hue:272,cap:"#b98eff",back:"#1a0f33",glow:"#c6a3ff",
+  secret:"The First Thread",   elder:"The Old One"}
+];
+window.WORLDS=WORLDS;
+
+var KEY="myco.grove1";
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||{} }catch(e){ return {} } }
+function save(p){ try{ localStorage.setItem(KEY,JSON.stringify(p)) }catch(e){} }
+var P=load();
+P.stars=P.stars||{}; P.spore=P.spore||{};
+window.__grove={get:function(){return P}, save:function(){save(P)}};
+
+function lid(w,l){ return w+"-"+l; }
+function starsOf(w,l){ return P.stars[lid(w,l)]||0; }
+function hasSpore(w,l){ return !!P.spore[lid(w,l)]; }
+function worldStars(w){ var t=0; for(var l=1;l<=8;l++) t+=starsOf(w,l);
+  t+=starsOf(w,"S"); t+=starsOf(w,"B"); return t; }
+function sporesIn(w){ var t=0; for(var l=1;l<=8;l++) if(hasSpore(w,l)) t++; return t; }
+function clearedIn(w){ var t=0; for(var l=1;l<=8;l++) if(starsOf(w,l)>0) t++; return t; }
+
+/* ---- unlock rules ---- */
+function worldUnlocked(w){
+  if(w===1) return true;
+  return starsOf(w-1,"B")>0;                    /* beat the previous Elder */
+}
+function levelUnlocked(w,l){
+  if(!worldUnlocked(w)) return false;
+  if(l===1) return true;
+  if(l==="S") return sporesIn(w)>=8;            /* all Golden Spores */
+  if(l==="B") return clearedIn(w)>=8;           /* all 8 tangles cleared */
+  return starsOf(w,l-1)>0;
+}
+window.__groveUnlocked=levelUnlocked;
+function reqText(w,l){
+  if(l==="S") return "Collect all 8 Golden Spores ("+sporesIn(w)+"/8)";
+  if(l==="B") return "Clear all 8 tangles ("+clearedIn(w)+"/8)";
+  if(l===1) return "Beat "+WORLDS[w-2].elder;
+  return "Clear tangle "+(l-1);
+}
+
+/* record a finish; returns {newSpore, unlockedSecret, unlockedElder, unlockedWorld} */
+window.__groveRecord=function(w,l,stars){
+  var k=lid(w,l), was=P.stars[k]||0, hadSpore=!!P.spore[k];
+  var secretBefore=levelUnlocked(w,"S"), elderBefore=levelUnlocked(w,"B");
+  var worldBefore=w<6?worldUnlocked(w+1):true;
+  if(stars>was) P.stars[k]=stars;
+  if(stars>=3 && typeof l==="number") P.spore[k]=true;
+  save(P);
+  return {
+    newSpore: !hadSpore && !!P.spore[k],
+    unlockedSecret: !secretBefore && levelUnlocked(w,"S"),
+    unlockedElder:  !elderBefore  && levelUnlocked(w,"B"),
+    unlockedWorld:  !worldBefore  && (w<6) && worldUnlocked(w+1),
+    stars: P.stars[k]||0
+  };
+};
+
+/* ---------- decorative art ---------- */
+function mush(x,y,s,cap,glow,tilt){
+  var cw=52*s, ch=30*s, st=30*s;
+  return '<g transform="translate('+x+','+y+') rotate('+(tilt||0)+')" opacity="1">'+
+   '<rect x="'+(-6*s)+'" y="'+(-2)+'" width="'+(12*s)+'" height="'+(st)+'" rx="'+(6*s)+'" fill="#150a26" stroke="#0f0620" stroke-width="2"/>'+
+   '<path d="M'+(-cw/2)+' 0 A '+(cw/2)+' '+ch+' 0 0 1 '+(cw/2)+' 0 Z" fill="'+cap+'" stroke="#0f0620" stroke-width="2.5"/>'+
+   '<ellipse cx="'+(-cw*0.16)+'" cy="'+(-ch*0.34)+'" rx="'+(4.5*s)+'" ry="'+(3.4*s)+'" fill="'+glow+'" opacity=".85"/>'+
+   '<ellipse cx="'+(cw*0.19)+'" cy="'+(-ch*0.22)+'" rx="'+(3.4*s)+'" ry="'+(2.6*s)+'" fill="'+glow+'" opacity=".7"/>'+
+   '<circle cx="'+(-3.4*s)+'" cy="'+(11*s)+'" r="'+(1.9*s)+'" fill="#0f0620"/>'+
+   '<circle cx="'+(3.4*s)+'"  cy="'+(11*s)+'" r="'+(1.9*s)+'" fill="#0f0620"/>'+
+   '</g>';
+}
+window.__mush=mush;
+
+function worldArt(W){
+  var g='<svg viewBox="0 0 300 130" preserveAspectRatio="xMidYMax slice">';
+  g+='<defs><radialGradient id="wg'+W.id+'" cx="50%" cy="90%" r="70%">'+
+     '<stop offset="0" stop-color="'+W.glow+'" stop-opacity=".30"/>'+
+     '<stop offset="1" stop-color="'+W.glow+'" stop-opacity="0"/></radialGradient></defs>';
+  g+='<rect width="300" height="130" fill="'+W.back+'"/>';
+  g+='<rect width="300" height="130" fill="url(#wg'+W.id+')"/>';
+  /* far silhouettes */
+  for(var i=0;i<7;i++){
+    var x=18+i*44+((i*29)%17), s=.42+((i*7)%5)/16;
+    g+='<g opacity=".33">'+mush(x,112,s,"#0f0620",W.glow,0)+'</g>';
+  }
+  /* hero cluster */
+  g+=mush(96,120,1.0,W.cap,W.glow,-4);
+  g+=mush(150,124,1.35,W.cap,W.glow,2);
+  g+=mush(202,118,.86,W.cap,W.glow,6);
+  /* floating spores */
+  for(var k=0;k<9;k++){
+    var sx=20+((k*61)%270), sy=18+((k*37)%70), rr=1.4+((k*13)%3)*.7;
+    g+='<circle cx="'+sx+'" cy="'+sy+'" r="'+rr+'" fill="'+W.glow+'" opacity=".55"/>';
+  }
+  return g+'</svg>';
+}
+
+/* ---------- world select ---------- */
+function starRow(n,max){
+  var s="";
+  for(var i=0;i<3;i++) s+='<span class="ms'+(i<n?" on":"")+'">★</span>';
+  return s;
+}
+window.__renderWorlds=function(){
+  var host=document.getElementById("worldList"); if(!host) return;
+  var h="";
+  for(var i=0;i<WORLDS.length;i++){
+    var W=WORLDS[i], un=worldUnlocked(W.id), st=worldStars(W.id);
+    h+='<button class="wcard'+(un?"":" locked")+'" data-w="'+W.id+'"'+(un?"":" disabled")+'>'+
+       '<div class="wart">'+worldArt(W)+'</div>'+
+       '<div class="wbody">'+
+         '<div class="wname">'+W.name+'</div>'+
+         '<div class="wflav">'+(un?W.flavor:"Sealed. "+ (W.id>1 ? "Beat "+WORLDS[i-1].elder+"." : ""))+'</div>'+
+         '<div class="wrow">'+
+           '<span class="wstars">★ '+st+'<em>/30</em></span>'+
+           '<span class="wspore">🍄 '+sporesIn(W.id)+'<em>/8</em></span>'+
+           (un?'':'<span class="wlock">🔒</span>')+
+         '</div>'+
+       '</div></button>';
+  }
+  host.innerHTML=h;
+  Array.prototype.forEach.call(host.querySelectorAll(".wcard"),function(b){
+    b.addEventListener("click",function(){
+      if(b.disabled){ return }
+      window.__openWorld(+b.dataset.w);
+    });
+  });
+};
+
+/* ---------- level map ---------- */
+window.__renderLevels=function(w){
+  var W=WORLDS[w-1], host=document.getElementById("levelMap"); if(!host) return;
+  document.getElementById("worldTitle").textContent=W.name;
+  document.getElementById("worldFlavor").textContent=W.flavor;
+  var nodes=[];
+  for(var l=1;l<=8;l++) nodes.push({id:l,label:String(l),cls:"lv"});
+  nodes.push({id:"S",label:"?",cls:"lv secret"});
+  nodes.push({id:"B",label:"",cls:"lv boss"});
+
+  var H=(nodes.length-1)*86+48+78, Wd=300;
+  var svg='<svg viewBox="0 0 '+Wd+' '+H+'" class="lmap">';
+  /* winding vine */
+  var pts=[];
+  for(var i=0;i<nodes.length;i++){
+    var y=48+i*86, x=Wd/2+Math.sin(i*0.95)*88;
+    pts.push([x,y]);
+  }
+  var d="M"+pts[0][0]+" "+pts[0][1];
+  for(var i=1;i<pts.length;i++){
+    var p=pts[i-1],c=pts[i];
+    d+=" C "+p[0]+" "+(p[1]+44)+", "+c[0]+" "+(c[1]-44)+", "+c[0]+" "+c[1];
+  }
+  svg+='<path d="'+d+'" fill="none" stroke="#0f0620" stroke-width="15" stroke-linecap="round"/>';
+  svg+='<path d="'+d+'" fill="none" stroke="'+W.glow+'" stroke-width="6" stroke-linecap="round" opacity=".5" stroke-dasharray="2 13"/>';
+  /* ambient spores along the vine */
+  for(var k=0;k<16;k++){
+    var kx=24+((k*53)%250), ky=30+((k*97)%(H-60));
+    svg+='<circle cx="'+kx+'" cy="'+ky+'" r="'+(1.3+((k*7)%3)*.6)+'" fill="'+W.glow+'" opacity=".4"/>';
+  }
+  svg+='</svg>';
+
+  var html='<div class="lmapwrap">'+svg;
+  for(var i=0;i<nodes.length;i++){
+    var n=nodes[i], un=levelUnlocked(w,n.id), st=starsOf(w,n.id);
+    var x=pts[i][0], y=pts[i][1];
+    var isS=n.id==="S", isB=n.id==="B";
+    var face = isB ? '<span class="bossface">'+
+        '<svg viewBox="0 0 40 40"><path d="M4 22 A16 13 0 0 1 36 22 Z" fill="'+W.cap+'" stroke="#0f0620" stroke-width="2.5"/>'+
+        '<rect x="15" y="20" width="10" height="14" rx="5" fill="#150a26" stroke="#0f0620" stroke-width="2"/>'+
+        '<circle cx="16" cy="26" r="2.1" fill="#fff"/><circle cx="24" cy="26" r="2.1" fill="#fff"/>'+
+        '<ellipse cx="12" cy="15" rx="3.4" ry="2.6" fill="'+W.glow+'"/>'+
+        '<ellipse cx="27" cy="13" rx="2.6" ry="2" fill="'+W.glow+'"/></svg></span>'
+      : (isS ? '<span class="lnum">?</span>' : '<span class="lnum">'+n.label+'</span>');
+    html+='<button class="'+n.cls+(un?"":" locked")+(st>0?" done":"")+'" '+
+      'style="left:'+(x/Wd*100)+'%;top:'+y+'px" data-l="'+n.id+'"'+(un?"":" disabled")+'>'+
+      face+
+      (un?'<span class="lstars">'+starRow(st)+'</span>':'<span class="llock">🔒</span>')+
+      (hasSpore(w,n.id)?'<span class="lspore">🍄</span>':'')+
+      '</button>';
+    if(!un) html+='<div class="lreq" style="left:'+(x/Wd*100)+'%;top:'+(y+34)+'px">'+reqText(w,n.id)+'</div>';
+    if(isS&&un) html+='<div class="lname" style="left:'+(x/Wd*100)+'%;top:'+(y+34)+'px">'+W.secret+'</div>';
+    if(isB&&un) html+='<div class="lname" style="left:'+(x/Wd*100)+'%;top:'+(y+56)+'px">'+W.elder+'</div>';
+  }
+  html+='</div>';
+  host.innerHTML=html;
+  host.style.setProperty("--wglow",W.glow);
+  Array.prototype.forEach.call(host.querySelectorAll(".lv"),function(b){
+    b.addEventListener("click",function(){
+      if(b.disabled) return;
+      window.__playLevel(w,(b.dataset.l==="S"||b.dataset.l==="B")?b.dataset.l:+b.dataset.l);
+    });
+  });
+};
+})();
+
+(function(){ if(window.__renderWorlds) window.__renderWorlds(); })();
+</script>
+
+<script>
+/* ================= SCREEN ROUTER ================= */
+(function(){
+"use strict";
+function showScreen(id){
+  ["scWorlds","scLevels","scGame"].forEach(function(s){
+    var el=document.getElementById(s); if(el) el.classList.toggle("on", s===id);
+  });
+  window.scrollTo(0,0);
+}
+window.__showScreen=showScreen;
+window.__openWorld=function(w){
+  if(window.__renderLevels) window.__renderLevels(w);
+  showScreen("scLevels");
+};
+window.__playLevel=function(w,l){
+  if(window.__game) window.__game.playLevel(w,l);
+  var W=window.WORLDS&&window.WORLDS[w-1];
+  if(W&&window.__buildScene) window.__buildScene(W);
+  showScreen("scGame");
+};
+function on(id,fn){ var e=document.getElementById(id); if(e) e.addEventListener("click",fn); }
+on("toWorlds",  function(){ if(window.__renderWorlds) window.__renderWorlds(); showScreen("scWorlds"); });
+on("backWorlds",function(){ if(window.__renderWorlds) window.__renderWorlds(); showScreen("scWorlds"); });
+on("toDaily",   function(){ if(window.__game) window.__game.daily(); showScreen("scGame"); });
+
+/* ================= LIVING SCENE ================= */
+window.__buildScene=function(W){
+  var host=document.getElementById("scene"); if(!host) return;
+  var glow=(W&&W.glow)||"#a8ffe0", cap=(W&&W.cap)||"#ff5fa8", id=(W&&W.id)||1;
+  function rnd(s){return function(){s|=0;s=s+0x6D2B79F5|0;var t=Math.imul(s^s>>>15,1|s);
+    t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+  var r=rnd(id*9871);
+  function layer(cls,count,scale){
+    var s='<svg class="'+cls+'" viewBox="0 0 400 120" preserveAspectRatio="xMidYMax slice">';
+    for(var i=0;i<count;i++){
+      var x=10+r()*380, sc=scale*(.6+r()*.7);
+      if(window.__mush) s+=window.__mush(x,112,sc,(i%3===0)?cap:"#0f0620",glow,(r()-.5)*10);
+    }
+    return s+'</svg>';
+  }
+  var html=layer("far",9,.5)+layer("mid",6,.8);
+  for(var f=0;f<9;f++){
+    var l=6+r()*88, t=8+r()*74, d=(5+r()*6).toFixed(1), b=(1.4+r()*2.2).toFixed(1);
+    html+='<i class="ff" style="left:'+l.toFixed(1)+'%;top:'+t.toFixed(1)+'%;background:'+glow+
+      ';box-shadow:0 0 8px 2px '+glow+';animation:flit '+d+'s ease-in-out infinite, blinky '+b+
+      's ease-in-out infinite;animation-delay:-'+(r()*5).toFixed(1)+'s,-'+(r()*3).toFixed(1)+'s"></i>';
+  }
+  var CR=[
+   '<svg viewBox="0 0 40 40"><ellipse cx="15" cy="30" rx="13" ry="6" fill="#0f0620"/><circle cx="21" cy="24" r="9" fill="'+cap+'" stroke="#0f0620" stroke-width="2.5"/><circle cx="24" cy="21" r="3.5" fill="'+glow+'"/><path d="M6 27 l-4-6 M9 26 l-2-7" stroke="#0f0620" stroke-width="2.5" stroke-linecap="round"/></svg>',
+   '<svg viewBox="0 0 40 40"><ellipse cx="20" cy="26" rx="6" ry="9" fill="#0f0620"/><path d="M20 22 C8 10 4 24 18 27 Z" fill="'+glow+'" stroke="#0f0620" stroke-width="2" opacity=".9"/><path d="M20 22 C32 10 36 24 22 27 Z" fill="'+glow+'" stroke="#0f0620" stroke-width="2" opacity=".9"/><circle cx="20" cy="18" r="3" fill="'+cap+'" stroke="#0f0620" stroke-width="2"/></svg>',
+   '<svg viewBox="0 0 40 40"><ellipse cx="20" cy="27" rx="10" ry="7" fill="'+cap+'" stroke="#0f0620" stroke-width="2.5"/><circle cx="20" cy="18" r="5" fill="#0f0620"/><circle cx="18" cy="17" r="1.4" fill="#fff"/><circle cx="22" cy="17" r="1.4" fill="#fff"/><path d="M12 32 l-3 4 M28 32 l3 4" stroke="#0f0620" stroke-width="2.5" stroke-linecap="round"/></svg>'
+  ];
+  for(var c=0;c<2;c++){
+    var dur=(16+r()*16).toFixed(1), dly=(r()*14).toFixed(1);
+    html+='<span class="critter" style="animation:walk '+dur+'s linear infinite;animation-delay:-'+dly+'s">'+
+          CR[Math.floor(r()*CR.length)]+'</span>';
+  }
+  host.innerHTML=html;
+};
+
+/* heading plate: bubble letters sitting on a drawn banner */
+(function(){
+  var el=document.getElementById("worldsTitle");
+  if(el&&window.bubbleText){
+    el.innerHTML='<svg class="plate" viewBox="0 0 300 74" preserveAspectRatio="none">'+
+      '<path d="M8 40 C8 14 40 6 150 6 C260 6 292 14 292 40 C292 64 260 70 150 70 C40 70 8 64 8 40 Z" '+
+      'fill="rgba(15,6,32,.55)" stroke="#0b6d51" stroke-width="3"/></svg>'+
+      window.bubbleText("THE GROVE",{fill:"#a8ffe0",fill2:"#16b98a",outline:"#0f0620",extrude:"#0b6d51"});
+  }
+})();
+/* first paint: grove list + an opening scene behind the daily board */
+if(window.__renderWorlds) window.__renderWorlds();
+window.__buildScene(window.WORLDS ? window.WORLDS[2] : null);
+})();
 </script>
 </body>
 </html>
