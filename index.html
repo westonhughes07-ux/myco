@@ -401,6 +401,42 @@ footer{font-size:.7rem;font-weight:600;color:#b9a4ee;text-align:center;line-heig
 
 
 
+
+/* ---------- ADS + IAP ---------- */
+.rw{width:100%;margin:var(--s2) 0 0;padding:var(--s2) var(--s3);border-radius:15px;
+  display:flex;align-items:center;justify-content:center;gap:var(--s2);
+  font-size:.86rem;font-weight:900;color:#5a3400;
+  background:linear-gradient(180deg,#ffe89a,#ffb31c);
+  border:3px solid var(--ink,#0f0620);
+  box-shadow:0 5px 0 #b06a00, inset 0 2px 0 rgba(255,255,255,.5)}
+.rw:active{transform:translateY(3px);box-shadow:0 2px 0 #b06a00}
+.rw .rwi{display:grid;place-items:center;width:22px;height:22px;border-radius:99px;
+  background:#5a3400;color:#ffe89a;font-size:.66rem}
+.adcd{text-align:center}
+.adnote{font-size:.66rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8d7ab8}
+.adring{margin:var(--s4) auto;width:96px;height:96px;border-radius:99px;display:grid;place-items:center;
+  background:linear-gradient(180deg,#4a3170,#2d1b4d);
+  border:4px solid var(--ink,#0f0620);
+  box-shadow:0 6px 0 var(--ink,#0f0620), inset 0 3px 0 rgba(255,255,255,.18)}
+.adring b{font-size:2.2rem;font-weight:900;color:#fff}
+.adsub{font-size:.76rem;font-weight:700;color:#6a5b3e}
+.iaph{margin-top:var(--s5)}
+.iapgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s2);margin-top:var(--s2)}
+.iap{position:relative;display:grid;gap:1px;padding:var(--s3) var(--s2);border-radius:16px;text-align:center;
+  background:linear-gradient(180deg,#4a3170,#33204f);
+  border:3px solid var(--ink,#0f0620);
+  box-shadow:0 4px 0 var(--ink,#0f0620), inset 0 2px 0 rgba(255,255,255,.14)}
+.iap:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink,#0f0620)}
+.iap b{font-size:1.05rem;font-weight:900;color:#fff}
+.iap span{font-size:.66rem;font-weight:700;color:#b9a3e6}
+.iap i{margin-top:var(--s1);font-style:normal;font-size:.8rem;font-weight:900;color:#ffd84d}
+.iap.wide{grid-column:1/-1}
+.iap.best::after{content:"BEST";position:absolute;top:-9px;left:50%;transform:translateX(-50%);
+  padding:1px 9px;border-radius:99px;font-size:.56rem;font-weight:900;letter-spacing:.08em;color:#07301f;
+  background:linear-gradient(180deg,#a8ffe0,#6affc4);border:3px solid var(--ink,#0f0620)}
+.iapfoot{margin-top:var(--s3);font-size:.68rem;font-weight:700;color:#8d7ab8;text-align:center}
+.iapbody{font-size:.8rem;font-weight:700;color:#4a3a22;line-height:1.45;margin:var(--s2) 0}
+
 /* ---------- DAILY CALENDAR + QUESTS ----------
    Same 4-layer treatment as every other surface: outline, vertical fill,
    inner gloss, hard bottom extrude. State is carried by fill + extrude,
@@ -708,6 +744,16 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
       <span class="sb"><b>Moonlit Caps</b><span>Silver Sporelings, forever</span></span>
       <button class="buy gl" data-buy="skin" data-cost="5" data-cur="glow">💎 5</button></div>
   </div>
+  <div class="ptitle iaph">Glowcap bundles</div>
+  <div class="iapgrid">
+    <button class="iap" data-iap="gc-s"><b>30</b><span>Glowcaps</span><i>$0.99</i></button>
+    <button class="iap" data-iap="gc-m"><b>170</b><span>Glowcaps</span><i>$4.99</i></button>
+    <button class="iap best" data-iap="gc-l"><b>380</b><span>Glowcaps</span><i>$9.99</i></button>
+    <button class="iap" data-iap="gc-xl"><b>850</b><span>Glowcaps</span><i>$19.99</i></button>
+    <button class="iap wide" data-iap="noads"><b>Remove Ads</b><span>Kills every sponsor break</span><i>$2.99</i></button>
+    <button class="iap wide" data-iap="starter"><b>Starter Pack</b><span>400 Spores + 40 Glowcaps + 5 powerups</span><i>$1.99</i></button>
+  </div>
+  <div class="iapfoot">Purchases are not live yet — nothing here charges you.</div>
   <div id="shopMsg"></div>
 </section>
 
@@ -835,11 +881,27 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
     <div><b id="ws">0</b><span>Streak</span></div>
   </div>
   <div class="rt" id="rate"></div>
+  <button class="rw" id="rwDouble" hidden><span class="rwi">▶</span>Double your Spores</button>
   <div class="ctl">
     <button class="pr" id="share">Share</button>
     <button id="again">Next →</button>
   </div>
   <div id="msg"></div>
+</div></div>
+
+<div class="ov" id="adov"><div class="cd adcd">
+  <div class="adnote">Sponsor break</div>
+  <div class="adring"><b id="adCount">5</b></div>
+  <div class="adsub" id="adSub">Your reward lands when this finishes</div>
+</div></div>
+
+<div class="ov" id="iapov"><div class="cd">
+  <button class="x" data-close>✕</button>
+  <h2 id="iapTitle"></h2>
+  <div class="tg">Not open yet</div>
+  <p class="iapbody">Glowcap bundles and Remove Ads go live when MYCO lands on its
+  first portal. Nothing is charged today and no payment details are collected.</p>
+  <div class="rt" id="iapPick"></div>
 </div></div>
 
 <div class="ov" id="dov"><div class="cd">
@@ -1084,7 +1146,7 @@ var G=null,N=7,paths=[],lockedP=[],moves=0,done=false,undoS=[],hintsLeft=3,activ
 var t0=0,timer=null,elapsed=0,mode="daily",curKey="",curNo=0,endlessSeed=0;
 var curW=1,curL=1,isTimed=false,timeLimit=0,timeLeft=0;
 var isBoss=false,atkEvery=9000,nextAtk=0;
-var luckyOn=false,freezeUntil=0,lastSpores=0,lastGlow=0;
+var luckyOn=false,freezeUntil=0,lastSpores=0,lastGlow=0,rwUsed=false,pendingInt=false;
 var board=$("#board");
 
 function idx(x,y){return y*N+x}
@@ -1655,6 +1717,12 @@ function finish(){
   }
   refreshStats();
   if(window.__cityLight) window.__cityLight(s.solved||0);
+  /* rewarded double-up: offered once per win, and never on a zero payout */
+  rwUsed=false;
+  var rwb=document.getElementById("rwDouble");
+  if(rwb){ rwb.hidden = lastSpores<=0; rwb.textContent=""; 
+    rwb.innerHTML='<span class="rwi">▶</span>Double your '+lastSpores+' Spores'; }
+  try{ pendingInt = noteClear(curL==="B"); }catch(e){ pendingInt=false }
   $("#win").classList.add("on");
 }
 
@@ -1839,6 +1907,66 @@ if(!st.seen){
 }
 
 /* ---- bridge: the only things the world screens need from in here ---- */
+/* ================= ADS + IAP SCAFFOLDING =================================
+   NO AD NETWORK AND NO PAYMENT PROCESSOR ARE WIRED. What ships here is the
+   pacing logic, the reward plumbing and the surfaces - the parts that are
+   painful to retrofit. AD_NET stays null until a portal SDK is dropped in
+   (Poki: PokiSDK.rewardedBreak / commercialBreak; CrazyGames: CrazySDK.ad).
+   The placeholder break is labelled as such and always pays out, so the
+   player is never misled about what they just watched.
+   IAP tiles are inert by design: they take no money and grant nothing. */
+var AD_NET=null;
+var AD_GAP=3;                 /* at most one interstitial per 3 clears */
+function adState(){ var s=load(); if(!s.ad) s.ad={clears:0,lastInt:-99,shown:0}; return s }
+function adsRemoved(){ return !!load().noads }
+
+/* Pure decision function - tested directly, independent of any SDK. */
+function shouldInterstitial(st,isBoss){
+  if(adsRemoved()) return false;
+  if(isBoss) return false;                       /* never break a boss payoff */
+  return (st.clears - st.lastInt) >= AD_GAP;
+}
+function noteClear(isBoss){
+  var s=adState(); s.ad.clears++;
+  var go=shouldInterstitial(s.ad,isBoss);
+  if(go){ s.ad.lastInt=s.ad.clears; s.ad.shown=(s.ad.shown||0)+1 }
+  save(s); return go;
+}
+
+/* Placeholder break. Swap the body for the portal SDK call; keep the callback
+   contract (cb(true) on completion, cb(false) if the player bails). */
+function playAd(cb){
+  if(AD_NET){ try{ return AD_NET(cb) }catch(e){ return cb(false) } }
+  var ov=document.getElementById("adov"), n=document.getElementById("adCount");
+  if(!ov||!n){ return cb(true) }
+  var t=5; n.textContent=t; ov.classList.add("on");
+  var iv=setInterval(function(){
+    t--; n.textContent=t;
+    if(t<=0){ clearInterval(iv); ov.classList.remove("on"); cb(true) }
+  },700);
+}
+function rewarded(kind,onGrant){
+  playAd(function(done){
+    if(!done) return;
+    var s=load(); s.ad=s.ad||{clears:0,lastInt:-99,shown:0};
+    s.ad.rw=(s.ad.rw||0)+1; save(s);
+    onGrant();
+  });
+}
+
+/* IAP: records which tile was tapped so real demand is visible before a
+   processor is chosen. Grants nothing, charges nothing. */
+var IAP={ "gc-s":"$0.99","gc-m":"$4.99","gc-l":"$9.99","gc-xl":"$19.99",
+          "noads":"$2.99","starter":"$1.99" };
+function tapIap(id){
+  if(!IAP[id]) return;
+  var s=load(); s.iapTaps=s.iapTaps||{};
+  s.iapTaps[id]=(s.iapTaps[id]||0)+1; save(s);
+  var pick=document.getElementById("iapPick");
+  if(pick) pick.textContent="You picked "+id.replace("gc-","Glowcaps ")+" ("+IAP[id]+"). We'll remember.";
+  var ov=document.getElementById("iapov"); if(ov) ov.classList.add("on");
+}
+
 /* ================= DAILY SYSTEMS (login calendar, quests, comeback) =======
    All three run off UTC day keys so they roll over at the same instant as
    the Daily Tangle. Missing a day FREEZES the streak once per rolling week
@@ -2006,12 +2134,23 @@ function fitBoard(){
 addEventListener("resize",fitBoard);
 addEventListener("orientationchange",fitBoard);
 window.fitBoard=fitBoard;
+window.__ads={shouldInt:shouldInterstitial,noteClear:noteClear,removed:adsRemoved,
+  play:playAd,rewarded:rewarded,tapIap:tapIap,iap:IAP,net:function(){return AD_NET}};
 window.__daily={open:openDaily,claim:claimDaily,roll:function(){return dailyRoll(load())},
   cbDue:function(){return comebackDue(load())},cbClaim:claimComeback,
   cal:renderCal,quests:renderQuests,state:load};
 
 window.__game={
   refreshPw:refreshPw, questBump:bumpQuest,
+  lastWin:function(){ return lastSpores },
+  rwTaken:function(){ return rwUsed },
+  doubleWin:function(){
+    if(rwUsed||lastSpores<=0) return null;
+    rwUsed=true;
+    var s=load(); s.spores=(s.spores||0)+lastSpores; save(s);
+    return s.spores;
+  },
+  intPending:function(){ var v=pendingInt; pendingInt=false; return v },
   spend:function(cost,cur){
     var s=load();
     if(cur==="glow"){ if((s.glow||0)<cost) return -1; s.glow-=cost; save(s); return s.glow; }
@@ -2099,6 +2238,7 @@ window.__cityLight(saved);
   set("helpTitle","HOW TO PLAY",{fill:"#a8ffe0",fill2:"#16b98a",outline:"#0f0620",extrude:"#0b6d51"});
   set("dailyTitle","DAILY",{fill:"#ffe89a",fill2:"#ffb31c",outline:"#0f0620",extrude:"#b06a00"});
   set("cbTitle","WELCOME BACK",{fill:"#c9b3ff",fill2:"#7b4dff",outline:"#0f0620",extrude:"#3a1f8f"});
+  set("iapTitle","SOON",{fill:"#ffe89a",fill2:"#ffb31c",outline:"#0f0620",extrude:"#b06a00"});
 })();
 
 </script>
@@ -2942,6 +3082,32 @@ if(window.__decorateHeaders) window.__decorateHeaders(null);
   try{ var s0=JSON.parse(localStorage.getItem("relay.v2"))||{};
     if(s0.gold) document.querySelector(".meter i").style.background="linear-gradient(90deg,#ffd84d,#ffb31c)"; }catch(e){}
   if(window.fitBoard){ window.fitBoard(); setTimeout(window.fitBoard,300); }
+
+
+  /* ---- ads + IAP surfaces (no network, no processor - see AD_NET) ---- */
+  (function(){
+    var A=window.__ads, Gm=window.__game; if(!A||!Gm) return;
+    var rwb=document.getElementById("rwDouble");
+    if(rwb) rwb.addEventListener("click",function(){
+      if(Gm.rwTaken()) return;
+      A.rewarded("double",function(){
+        var bal=Gm.doubleWin();
+        if(bal==null) return;
+        rwb.hidden=true;
+        var bs=document.getElementById("balSpores"); if(bs) bs.textContent=bal;
+        var m=document.getElementById("msg"); if(m) m.textContent="Spores doubled!";
+      });
+    });
+    /* the capped interstitial runs on the way OUT of the win card, never over it */
+    var nx=document.getElementById("again");
+    if(nx) nx.addEventListener("click",function(){
+      if(Gm.intPending()) A.play(function(){});
+    });
+    document.addEventListener("click",function(e){
+      var t=e.target.closest?e.target.closest("[data-iap]"):null;
+      if(t) A.tapIap(t.dataset.iap);
+    });
+  })();
 
   /* ---- daily systems: comeback takes precedence, then the login calendar ---- */
   (function(){
