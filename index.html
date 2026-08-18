@@ -12,7 +12,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Bungee&display=swap" rel="stylesheet">
 <style>
 /* RELAY — casual mobile puzzle language.
    Saturated gradients · chunky rounded forms · dark cartoon outlines ·
@@ -28,8 +28,10 @@
   --cream:#fff4e8; --white:#ffffff;
   --outline:#0f0620; --outline-2:#1c0e33;
   --dead:#4a3a6b; --dead-dk:#2f2350;
-  --fd:"Baloo 2",system-ui,sans-serif;
-  --fb:"Baloo 2",system-ui,sans-serif;
+  --fd:"Bungee","Baloo 2",cursive;      /* numerals + HUD keys */
+  --fb:"Baloo 2",cursive;               /* prose + labels */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
+  --r2:8px; --r3:12px; --r4:16px; --r5:20px;
   --e:cubic-bezier(.2,.8,.3,1);
   --spring:cubic-bezier(.34,1.6,.5,1);
 }
@@ -58,7 +60,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
     radial-gradient(1.5px 1.5px at 22% 32%, #cfe4ff 50%, transparent 55%);
   opacity:.55; animation:twinkle 4s ease-in-out infinite alternate}
 @keyframes twinkle{from{opacity:.35}to{opacity:.7}}
-.wrap{width:100%;max-width:480px;position:relative;z-index:2;display:flex;flex-direction:column;gap:10px}
+.wrap{width:100%;max-width:480px;position:relative;z-index:2;display:flex;flex-direction:column;gap:var(--s3)}
 
 /* ---------- wordmark: heavy, outlined, arched ---------- */
 .topbar{display:grid;grid-template-columns:46px 1fr 46px;align-items:center;gap:8px}
@@ -105,7 +107,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
 .forestline b{font-weight:800;color:var(--gold-2);}
 
 /* ---------- mode chips ---------- */
-.tabs{display:flex;gap:7px}
+.tabs{display:flex;gap:var(--s2)}
 .tab{flex:1;font:inherit;font-family:var(--fb);font-size:.8rem;font-weight:800;cursor:pointer;
   color:#e6d9ff; padding:9px 6px; border-radius:13px;
   background:linear-gradient(180deg,#7047e6,#5028bd);
@@ -120,7 +122,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
 /* ---------- score strip ---------- */
 .scoreline{display:flex;justify-content:space-between;align-items:center;gap:8px;
   background:linear-gradient(180deg,#3f2299,#2f1878);
-  border:3px solid var(--outline);border-radius:14px;padding:7px 14px;
+  border:3px solid var(--outline);border-radius:14px;padding:var(--s2) var(--s4);
   box-shadow:0 4px 0 var(--outline), inset 0 2px 0 rgba(255,255,255,.16);
   font-size:.74rem;font-weight:700;color:#d9c8ff}
 .scoreline b{font-weight:800;font-size:1.15rem;color:#fff;margin-left:3px}
@@ -133,7 +135,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
   box-shadow:inset 0 -3px 0 rgba(0,0,0,.16);transition:width .35s var(--e)}
 
 /* ---------- the board ---------- */
-.frame{position:relative;padding:9px;border-radius:18px;
+.frame{position:relative;padding:var(--s2);border-radius:18px;
   background:linear-gradient(180deg,#7a4fe8,#5228c0);
   border:4px solid var(--outline);
   box-shadow:0 6px 0 var(--outline), inset 0 3px 0 rgba(255,255,255,.26)}
@@ -213,7 +215,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
  to{opacity:0;transform:translate(-50%,-46px) scale(1)}}
 
 /* ---------- chunky pressable keys ---------- */
-.ctl{display:flex;gap:8px}
+.ctl{display:flex;gap:var(--s2)}
 button{flex:1;font:inherit;font-family:var(--fb);font-size:.84rem;font-weight:800;cursor:pointer;
   color:#fff;padding:12px 8px;border-radius:15px;
   background:linear-gradient(180deg,#8257f0,#5d2ecd);
@@ -373,6 +375,107 @@ footer{font-size:.7rem;font-weight:600;color:#b9a4ee;text-align:center;line-heig
 .mbr{transform-box:fill-box;transform-origin:50% 100%;animation:mbreathe 4.6s ease-in-out infinite alternate}
 @keyframes mbreathe{from{transform:scaleY(1)}to{transform:scaleY(1.045) scaleX(.988)}}
 
+
+/* ---------- BOSS BATTLE ---------- */
+.bossbar{display:flex;align-items:center;gap:10px;
+  background:linear-gradient(180deg,#3a1030,#26081f);
+  border:3px solid var(--ink,#0f0620);border-radius:14px;padding:6px 12px 6px 8px;
+  box-shadow:0 4px 0 var(--ink,#0f0620), inset 0 2px 0 rgba(255,255,255,.12)}
+.bossbar[hidden]{display:none}
+#bossface svg{display:block;filter:drop-shadow(0 2px 0 rgba(0,0,0,.5))}
+#bossface.hit svg{animation:bosshit .4s ease-out}
+@keyframes bosshit{0%{transform:rotate(-7deg) scale(1.12)}60%{transform:rotate(4deg)}100%{transform:none}}
+.bossmeta{flex:1;min-width:0}
+.bossmeta b{font-size:.82rem;font-weight:800;color:#ffd0e8;display:block;line-height:1.2}
+.bosshp{height:11px;border-radius:999px;background:#150515;border:2.5px solid var(--ink,#0f0620);
+  overflow:hidden;margin-top:3px}
+.bosshp i{display:block;height:100%;width:100%;border-radius:999px;
+  background:linear-gradient(90deg,#ff4d6d,#ff8ec4);transition:width .3s var(--e)}
+.atkwrap{font-size:.56rem;font-weight:700;color:#c9a0b8;text-align:center;line-height:1.3}
+.atkwrap b{font-size:1rem;color:#ff8ec4}
+.flashbad{position:fixed;inset:0;pointer-events:none;z-index:44;
+  background:radial-gradient(circle at 50% 55%,#ff4d6d 0%,transparent 60%);
+  opacity:0;animation:fb .5s ease-out forwards}
+@keyframes fb{0%{opacity:.3}to{opacity:0}}
+
+
+/* ---------- BOTTOM TAB BAR ---------- */
+body{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
+#tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;
+  display:flex;justify-content:center;gap:14px;
+  padding:9px 14px calc(10px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,rgba(21,10,38,.6),#150a26 40%);
+  border-top:3px solid var(--ink,#0f0620)}
+.tbtn{width:58px;height:58px;padding:0;flex:0 0 auto;border-radius:19px;
+  display:grid;place-items:center;color:#cdb8f4;
+  background:linear-gradient(180deg,var(--plum-2,#3d2666),var(--plum,#2d1b4d));
+  border:3px solid var(--ink,#0f0620);
+  box-shadow:0 4px 0 var(--ink,#0f0620), inset 0 2px 0 rgba(255,255,255,.18)}
+.tbtn svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:2.3;
+  stroke-linecap:round;stroke-linejoin:round}
+.tbtn:active{transform:translateY(4px);box-shadow:0 0 0 var(--ink,#0f0620)}
+.tbtn.on{color:#07301f;background:linear-gradient(180deg,var(--mint-2,#a8ffe0),var(--mint,#6affc4));
+  box-shadow:0 4px 0 var(--mint-dk,#16b98a), inset 0 2px 0 rgba(255,255,255,.5)}
+
+/* ---------- icon mode chips ---------- */
+.tabs{justify-content:center}
+.tab{flex:0 0 auto;width:52px;height:44px;font-size:1.05rem;padding:0;border-radius:14px}
+
+/* ---------- STORE ---------- */
+.balrow{display:flex;justify-content:center;gap:var(--s3)}
+.bal{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:999px;
+  background:linear-gradient(180deg,var(--plum-2,#3d2666),var(--plum,#2d1b4d));
+  border:3px solid var(--ink,#0f0620);font-weight:800;font-size:.9rem;color:#fff;
+  box-shadow:0 3px 0 var(--ink,#0f0620), inset 0 2px 0 rgba(255,255,255,.16)}
+.bal b{color:var(--mint-2,#a8ffe0)}
+.shopgrid{display:flex;flex-direction:column;gap:var(--s3)}
+.shopitem{display:flex;align-items:center;gap:12px;text-align:left;
+  background:linear-gradient(180deg,var(--plum-2,#3d2666),var(--plum,#2d1b4d));
+  border:3px solid var(--ink,#0f0620);border-radius:16px;padding:var(--s3) var(--s3);
+  box-shadow:0 4px 0 var(--ink,#0f0620), inset 0 2px 0 rgba(255,255,255,.14)}
+.shopitem .si{font-size:1.7rem;flex:0 0 auto;filter:drop-shadow(0 2px 0 rgba(0,0,0,.4))}
+.shopitem .sb{flex:1;min-width:0}
+.shopitem .sb b{display:block;font-size:.95rem;color:#fff}
+.shopitem .sb span{font-size:.72rem;font-weight:600;color:#c3aef0}
+.buy{flex:0 0 auto;width:auto;padding:9px 14px;border-radius:12px;font-size:.78rem}
+.buy:disabled{opacity:.45}
+.soon{opacity:.55}
+#shopMsg{text-align:center;font-size:.76rem;font-weight:800;color:var(--mint-2,#a8ffe0);height:16px}
+
+
+/* numerals ride the display face so digits never read as system text */
+.scoreline b,.bal b,.tick b,.sc b,.bossmeta b,.lnumchip,.wrow{font-family:var(--fd);letter-spacing:.02em}
+.scoreline b,.sc b{font-weight:400}
+
+
+/* Visual-anchor integrity: containers are rim-lit by the world key light and
+   cast a shadow tinted with that same hue, so no panel floats free of the scene. */
+:root{--wglow:#a8ffe0}
+.scoreline,.meter,.forest,.frame,.tab,.tbtn,.bal,.shopitem,.bossbar,.wcard{
+  box-shadow:0 4px 0 var(--ink,#0f0620),
+             inset 0 2px 0 rgba(255,255,255,.16),
+             inset 0 -2px 0 0 color-mix(in oklab, var(--wglow) 22%, transparent),
+             0 10px 22px -14px color-mix(in oklab, var(--wglow) 45%, transparent)}
+.frame{box-shadow:0 6px 0 var(--ink,#0f0620),
+             inset 0 3px 0 rgba(255,255,255,.24),
+             inset 0 -3px 0 0 color-mix(in oklab, var(--wglow) 26%, transparent),
+             0 16px 30px -18px color-mix(in oklab, var(--wglow) 55%, transparent)}
+/* state signifiers: not a border swap — offset + accent + dither */
+.tab:hover:not(:disabled),.tbtn:hover:not(.on),.buy:hover:not(:disabled){
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect x='0' y='0' width='1' height='1' fill='%23ffffff' opacity='.13'/%3E%3C/svg%3E")}
+.tab:disabled,.tbtn:disabled,.buy:disabled{
+  filter:saturate(.25);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect x='0' y='2' width='1' height='1' fill='%23000000' opacity='.35'/%3E%3C/svg%3E")}
+
+
+.gly{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2.1;
+  stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.tab .gly{width:23px;height:23px;stroke-width:2.3}
+.ctl button{display:inline-flex;align-items:center;justify-content:center;gap:var(--s1)}
+
+.stake{filter:drop-shadow(0 0 4px var(--wglow));font-size:.86em}
+#goalWrap{cursor:help}
+
 /* ---------- overlays ---------- */
 .ov{position:fixed;inset:0;z-index:40;display:none;place-items:center;padding:16px;
   background:rgba(20,8,60,.82);backdrop-filter:blur(6px);overflow-y:auto}
@@ -459,45 +562,74 @@ footer{font-size:.7rem;font-weight:600;color:#b9a4ee;text-align:center;line-heig
 </section>
 
 <!-- ============ GAME ============ -->
+<!-- ============ STORE ============ -->
+<section class="screen" id="scStore">
+  <div class="hplate"><div id="storeTitle"></div>
+    <div class="ptitle">Spend your Spores</div></div>
+  <div class="balrow">
+    <span class="bal">🍄 <b id="balSpores">0</b></span>
+    <span class="bal soon">💎 <b id="balGlow">0</b></span>
+  </div>
+  <div class="shopgrid">
+    <div class="shopitem"><span class="si">✨</span>
+      <span class="sb"><b>Hint Refill</b><span>Back to 3 hints on the current tangle</span></span>
+      <button class="buy pr" data-buy="hints" data-cost="30">🍄 30</button></div>
+    <div class="shopitem"><span class="si">🌟</span>
+      <span class="sb"><b>Golden Trim</b><span>Gild your progress meter, forever</span></span>
+      <button class="buy pr" data-buy="gold" data-cost="120">🍄 120</button></div>
+    <div class="shopitem soon"><span class="si">💎</span>
+      <span class="sb"><b>Glowcap Bundles</b><span>Premium currency — coming soon</span></span>
+      <button class="buy" disabled>Soon</button></div>
+    <div class="shopitem soon"><span class="si">📺</span>
+      <span class="sb"><b>Free Spores</b><span>Watch an ad — coming soon</span></span>
+      <button class="buy" disabled>Soon</button></div>
+  </div>
+  <div id="shopMsg"></div>
+</section>
+
 <section class="screen on" id="scGame">
 
   <header class="topbar">
     <button class="icon" id="help" aria-label="How to play" title="How to play">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9a3 3 0 1 1 4.2 2.8c-.8.4-1.3 1.1-1.3 2v.4"/><circle cx="12" cy="17.7" r="1.3" fill="currentColor" stroke="none"/></svg>
     </button>
-    <div class="brand">
+    <div class="brand"><span class="sr"><b id="pno">1</b><b id="stk">0</b></span>
       <div id="brandArt"></div>
       <div class="sub" id="modeLabel">Wake the sleeping forest</div>
     </div>
-    <button class="icon" id="stats" aria-label="Your record" title="Your record">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V11M12 19V5M19 19v-5"/></svg>
+    <button class="icon" id="muteBtn" aria-label="Sound on or off" title="Sound">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10 v4 h4 l5 4 V6 l-5 4 Z"/><path id="muteWave" d="M16 9 a4.5 4.5 0 0 1 0 6"/></svg>
     </button>
+    <button class="sr" id="stats" aria-label="Record"></button>
   </header>
-
-  <div class="meta">
-    <span class="chip">Tangle <b id="pno">—</b></span>
-    <span class="chip">🍄 Streak <b id="stk">0</b></span>
-  </div>
 
   <div class="forest" id="forest" aria-hidden="true"></div>
   <div class="forestline">
-    <span>Sporelings awake · <b id="cityLit">0</b>/<b id="cityTot">24</b></span>
-    <span id="cityNote">Solve a tangle to wake one!</span>
+    <span><b id="cityLit">0</b>/<b id="cityTot">24</b> awake</span>
+    <span id="cityNote" class="sr">Solve a tangle to wake one!</span>
   </div>
 
   <div class="tabs">
-    <button class="tab on" data-mode="daily">Today</button>
-    <button class="tab" data-mode="endless">Endless</button>
-    <button class="tab" data-mode="archive">Past</button>
+    <button class="tab on" data-mode="daily" title="Daily tangle" aria-label="Daily"><svg viewBox="0 0 24 24" class="gly"><circle cx="12" cy="12" r="5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></button>
+    <button class="tab" data-mode="endless" title="Endless grove" aria-label="Endless"><svg viewBox="0 0 24 24" class="gly"><path d="M9 12a3.4 3.4 0 1 1 3 3.4c-2 0-3 -6.8 -6 -6.8a3.4 3.4 0 0 0 0 6.8c3 0 4-6.8 6-6.8a3.4 3.4 0 0 1 0 6.8"/></svg></button>
+    <button class="tab" data-mode="archive" title="Past tangles" aria-label="Past"><svg viewBox="0 0 24 24" class="gly"><circle cx="12" cy="13" r="7"/><path d="M12 9.5V13l2.5 1.8M9 3h6"/></svg></button>
   </div>
 
   <div class="scoreline">
     <span>Strands <b id="mv">0</b></span>
-    <span class="pow">Fed <b id="lc">0</b>/<b id="tc">0</b></span>
+    <span class="sr">Fed <b id="lc">0</b>/<b id="tc">0</b></span>
     <span id="goalWrap">3★ <b id="pr">—</b></span>
     <span class="sr" id="tm">0:00</span>
   </div>
   <div class="meter"><i id="meter"></i></div>
+  <div id="bossbar" class="bossbar" hidden>
+    <span id="bossface"></span>
+    <div class="bossmeta">
+      <b id="bossname"></b>
+      <div class="bosshp"><i id="bosshpi"></i></div>
+    </div>
+    <span class="atkwrap">attacks<br><b id="atkcd">—</b></span>
+  </div>
 
   <div class="frame">
     <span class="fl" id="gridLabel">7 × 7</span>
@@ -512,10 +644,9 @@ footer{font-size:.7rem;font-weight:600;color:#b9a4ee;text-align:center;line-heig
   </div>
 
   <div class="ctl">
-    <button id="undo">↶ Undo</button>
-    <button id="hint">✨ Hint</button>
-    <button id="reset">↺ Reset</button>
-    <button id="toWorlds">🗺️</button>
+    <button id="undo"><svg viewBox="0 0 24 24" class="gly"><path d="M4 9h9a5 5 0 0 1 0 10h-3"/><path d="M7 5 3.5 9 7 13"/></svg>Undo</button>
+    <button id="hint"><svg viewBox="0 0 24 24" class="gly"><path d="M12 3.5l1.7 4.3 4.3 1.7-4.3 1.7L12 15.5l-1.7-4.3L6 9.5l4.3-1.7z"/><path d="M18 16l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z"/></svg>Hint</button>
+    <button id="reset"><svg viewBox="0 0 24 24" class="gly"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v4.5h-4.5"/></svg>Reset</button>
   </div>
 
   <div class="tick">
@@ -526,6 +657,22 @@ footer{font-size:.7rem;font-weight:600;color:#b9a4ee;text-align:center;line-heig
   <footer>Made 2026 · free, no signup · grows right in your browser</footer>
 </section>
 </div>
+
+
+<nav id="tabbar" aria-label="Main">
+  <button class="tbtn" id="tabGrove" aria-label="The Grove" title="The Grove">
+    <svg viewBox="0 0 24 24"><path d="M4 15 A8 7 0 0 1 20 15 Z"/><path d="M10 15 v4 M14 15 v3"/><circle cx="9" cy="11" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="10" r="1" fill="currentColor" stroke="none"/></svg>
+  </button>
+  <button class="tbtn on" id="tabPlay" aria-label="Play" title="Play">
+    <svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.6"/><circle cx="18" cy="18" r="2.6"/><path d="M8 7 C14 9 10 15 15.5 17"/></svg>
+  </button>
+  <button class="tbtn" id="tabStore" aria-label="Store" title="Store">
+    <svg viewBox="0 0 24 24"><path d="M5 9 h14 l-1.4 10 a2 2 0 0 1 -2 1.8 h-7.2 a2 2 0 0 1 -2 -1.8 Z"/><path d="M9 9 V7 a3 3 0 0 1 6 0 v2"/></svg>
+  </button>
+  <button class="tbtn" id="tabRecord" aria-label="Your record" title="Your record">
+    <svg viewBox="0 0 24 24"><path d="M5 19 V11 M12 19 V5 M19 19 v-6"/></svg>
+  </button>
+</nav>
 
 <div class="conf" id="conf" aria-hidden="true"></div>
 
@@ -766,6 +913,7 @@ function flowGen(seedStr,N){
 var G=null,N=7,paths=[],lockedP=[],moves=0,done=false,undoS=[],hintsLeft=3,active=-1,dragMoved=false,curHue=158;
 var t0=0,timer=null,elapsed=0,mode="daily",curKey="",curNo=0,endlessSeed=0;
 var curW=1,curL=1,isTimed=false,timeLimit=0,timeLeft=0;
+var isBoss=false,atkEvery=9000,nextAtk=0;
 var board=$("#board");
 
 function idx(x,y){return y*N+x}
@@ -998,7 +1146,40 @@ function startTimer(){
     } else {
       $("#tm").textContent=fmt(elapsed);
     }
+    if(isBoss && !done){
+      var fed=recompute(), hp=Math.max(0,100-(fed/(N*N))*100);
+      var hpEl=document.getElementById("bosshpi"); if(hpEl) hpEl.style.width=hp.toFixed(1)+"%";
+      var cd=document.getElementById("atkcd");
+      if(cd) cd.textContent=Math.max(0,Math.ceil((nextAtk-elapsed)/1000));
+      if(elapsed>=nextAtk){ nextAtk+=atkEvery; bossAttack(); }
+    }
   },250);
+}
+function bossAttack(){
+  if(done||!G) return;
+  var W=(window.WORLDS&&window.WORLDS[curW-1])||{bossHard:1};
+  var hits=W.bossHard||1, victims=[];
+  for(var k=0;k<G.K;k++){
+    if(lockedP[k]||pairDone(k)) continue;
+    if((paths[k]||[]).length>=2) victims.push(k);
+  }
+  victims.sort(function(a,b){return paths[b].length-paths[a].length});
+  if(!victims.length) return;
+  for(var i=0;i<Math.min(hits,victims.length);i++){
+    var v=victims[i], tail=paths[v][paths[v].length-1];
+    paths[v].length=1;
+    var el=board.querySelectorAll(".c")[tail];
+    if(el) popup(el,"SNIPPED!");
+  }
+  var f=document.createElement("div"); f.className="flashbad"; document.body.appendChild(f);
+  setTimeout(function(){ if(f.parentNode) f.parentNode.removeChild(f) },520);
+  board.classList.remove("shake"); void board.offsetWidth; board.classList.add("shake");
+  if(typeof tone==="function"){ tone(85,.3,{type:"sawtooth",gain:.11,slideTo:55}); }
+  var bf=document.getElementById("bossface");
+  if(bf){ bf.classList.remove("hit"); void bf.offsetWidth; bf.classList.add("hit"); }
+  buzz([40,30,60]);
+  if(active>=0 && paths[active] && paths[active].length<2) active=-1;
+  paint();
 }
 function stopTimer(){ if(timer){clearInterval(timer);timer=null} }
 function fmt(ms){var s=Math.floor(ms/1000);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
@@ -1048,6 +1229,11 @@ function tryExtend(c){
   if(typeof sfxConnect==="function") sfxConnect(recompute()/(N*N));
   buzz(6);
   if(!wasDone && pairDone(active)){
+    if(isBoss){ lockedP[active]=true;
+      var bf2=document.getElementById("bossface");
+      if(bf2){ bf2.classList.remove("hit"); void bf2.offsetWidth; bf2.classList.add("hit"); }
+      if(typeof tone==="function") tone(120,.22,{type:"square",gain:.09,slideTo:70});
+    }
     var el=board.querySelectorAll(".c")[c];
     if(el){ ring(el); burst(el,7); popup(el,"LINKED!"); }
     if(typeof sfxCascade==="function") sfxCascade(3,recompute()/(N*N));
@@ -1151,6 +1337,7 @@ function recordWin(ns){
   s.dist=s.dist||[0,0,0,0]; s.dist[bucket(over)]++;
   if(s.best==null||over<s.best) s.best=over;
   s.stars=(s.stars||0)+ns;
+  s.spores=(s.spores||0)+8+4*ns;
   if(mode==="daily"){
     var tk=keyOf(todayUTC());
     if(s.last!==tk){ s.streak=(s.last===yKey())?(s.streak||0)+1:1; s.last=tk; }
@@ -1170,7 +1357,9 @@ function finish(){
   if(ns>=3) r="PERFECT! Three stars. 🍄";
   else if(ns===2) r="Two stars — "+Math.max(1,moves-TH.t3)+" strands past a perfect run. ✨";
   else r="Every Sporeling is awake! Go again for more stars. 🌱";
-  $("#rate").textContent=r;
+  var earned="  +"+(8+4*ns)+" \uD83C\uDF44 Spores";
+  if(mode==="level" && typeof curL==="number" && ns>=3) earned+="  \u00B7  Golden Spore!";
+  $("#rate").textContent=r+earned;
   $("#again").textContent = mode==="endless" ? "Next board" : "Endless";
   var sc=$("#stars");
   if(sc){ sc.innerHTML=starSVG(ns>=1)+starSVG(ns>=2)+starSVG(ns>=3); }
@@ -1178,6 +1367,10 @@ function finish(){
   if(mode==="level" && window.__groveRecord){
     var res=window.__groveRecord(curW,curL,ns);
     var bits=[];
+    if(curL==="B" && window.bossArt && window.WORLDS){
+      var BW2=window.WORLDS[curW-1];
+      bits.push('<span style="display:block">'+window.bossArt(BW2,"beaten",64)+'</span>'+BW2.elder+' is defeated!');
+    }
     if(res.newSpore) bits.push("🍄 Golden Spore!");
     if(res.unlockedSecret) bits.push("✨ A secret ring appears…");
     if(res.unlockedElder) bits.push("☠ The Elder stirs…");
@@ -1224,7 +1417,7 @@ function sizeFor(m){ return m==="endless" ? [5,7,7,9][Math.min(3,Math.floor((loa
 function newBoard(){
   done=false; moves=0; undoS.length=0; hintsLeft=3; elapsed=0; stopTimer(); t0=0;
   var seed,label,code;
-  isTimed=false; if(mode==="daily"){ curKey=keyOf(todayUTC()); curNo=noOf(todayUTC()); N=7;
+  isTimed=false; isBoss=false; if(mode==="daily"){ curKey=keyOf(todayUTC()); curNo=noOf(todayUTC()); N=7;
     seed="relay-"+curKey; label="Wake the sleeping forest"; code="";
   } else if(mode==="archive"){ N=7;
     /* Archive must never serve a board from before the game existed.
@@ -1245,6 +1438,8 @@ function newBoard(){
           : (curL==="T") ? "Against the clock" : WW.name;
     curNo = isSecret ? "★" : (curL==="B") ? "☠" : (curL==="T") ? "⏱" : curL;
     isTimed = (curL==="T");
+    isBoss = (curL==="B");
+    if(isBoss) atkEvery=Math.max(5000,(13-curW)*1000);
     /* generous but real: about 2.4s per tile */
     timeLimit = Math.round(N*N*2400);
     timeLeft = timeLimit;
@@ -1259,16 +1454,44 @@ function newBoard(){
   $("#tm").textContent = isTimed ? fmt(timeLimit) : "0:00";
   var tw=$("#tm").parentNode; if(tw) tw.classList.remove("urgent");
   G=flowGen(seed,N);
+  var bb=document.getElementById("bossbar");
+  if(bb){
+    bb.hidden=!isBoss;
+    if(isBoss && window.bossArt && window.WORLDS){
+      var BW=window.WORLDS[curW-1];
+      document.getElementById("bossname").textContent=BW.elder;
+      document.getElementById("bossface").innerHTML=window.bossArt(BW,"angry",46);
+      document.getElementById("bosshpi").style.width="100%";
+      document.getElementById("atkcd").textContent=Math.round(atkEvery/1000);
+      nextAtk=atkEvery;
+    }
+  }
   paths=[]; for(var pk=0;pk<G.K;pk++) paths.push([]);
   lockedP=new Array(G.K).fill(false); active=-1;
   curHue=(mode==="level"&&window.WORLDS)?window.WORLDS[curW-1].hue:158;
   $("#pno").textContent=curNo;
   var TH=thresholds(G.par);
   $("#pr").textContent = isTimed ? fmt(timeLimit) : ("\u2264"+TH.t3);
-  var gw=$("#goalWrap"); if(gw) gw.firstChild.nodeValue = isTimed ? "Time " : "3\u2605 ";
+  var gw=$("#goalWrap");
+  if(gw){
+    gw.firstChild.nodeValue = isTimed ? "Beat " : "3\u2605 ";
+    var stake=gw.querySelector(".stake");
+    if(!stake){ stake=document.createElement("span"); stake.className="stake"; gw.appendChild(stake); }
+    var wantsSpore = (mode==="level" && typeof curL==="number");
+    stake.textContent = wantsSpore ? " \uD83C\uDF44" : "";
+    gw.title = wantsSpore
+      ? "Finish in "+TH.t3+" strands or fewer for 3 stars \u2014 that drops a Golden Spore, and Golden Spores are the only key to this grove\u2019s secret ring."
+      : (isTimed ? "Beat the clock for 3 stars." : "Finish in "+TH.t3+" strands or fewer for 3 stars.");
+  }
   $("#modeLabel").textContent=label; $("#gridLabel").textContent=N+" × "+N;
   $("#assetCode").textContent=code;
   build(); paint(false);
+  if(isBoss){
+    var mid=board.querySelectorAll(".c")[(N*N)>>1];
+    if(mid) popup(mid, (window.WORLDS?window.WORLDS[curW-1].elder:"THE ELDER").toUpperCase()+" WAKES!");
+    if(typeof tone==="function"){ tone(70,.5,{type:"sawtooth",gain:.12,slideTo:48}); tone(52,.7,{type:"sawtooth",gain:.09,delay:.18,slideTo:40}); }
+    buzz([60,40,80]);
+  }
 }
 /* Day 1 has no past boards yet. Say so plainly and stay on Daily rather than
    inventing a board dated before the game existed. */
@@ -1340,6 +1563,13 @@ if(!st.seen){
 
 /* ---- bridge: the only things the world screens need from in here ---- */
 window.__game={
+  spend:function(cost){
+    var s=load(); if((s.spores||0)<cost) return -1;
+    s.spores-=cost; save(s); return s.spores;
+  },
+  balance:function(){ return load().spores||0; },
+  grant:function(what){ if(what==="hints"){ hintsLeft=3; paint(false);} },
+  toggleMute:function(){ muted=!muted; return muted; },
   debugState:function(){ return G?{pairs:G.pairs,sol:G.sol,K:G.K,N:N}:null; },
   debugSolve:function(){ if(!G) return;
     for(var k=0;k<G.K;k++) paths[k]=G.sol[k].slice();
@@ -1570,6 +1800,141 @@ function mush(x,y,s,cap,glow,tilt){
 }
 window.__mush=mush;
 
+/* ---------- scenery helpers ---------- */
+function tr_(x,y,s,trunk,crown,glow){
+  return '<g><rect x="'+(x-4*s)+'" y="'+(y-26*s)+'" width="'+(8*s)+'" height="'+(27*s)+'" rx="'+(3*s)+'" fill="'+trunk+'" stroke="#0f0620" stroke-width="2"/>'+
+  '<circle cx="'+x+'" cy="'+(y-34*s)+'" r="'+(16*s)+'" fill="'+crown+'" stroke="#0f0620" stroke-width="2.5"/>'+
+  '<circle cx="'+(x-7*s)+'" cy="'+(y-40*s)+'" r="'+(3.4*s)+'" fill="'+glow+'" opacity=".55"/></g>';
+}
+function pine_(x,y,s,c){
+  return '<path d="M'+x+' '+(y-46*s)+' L'+(x+13*s)+' '+(y-20*s)+' L'+(x+6*s)+' '+(y-20*s)+' L'+(x+16*s)+' '+y+
+  ' L'+(x-16*s)+' '+y+' L'+(x-6*s)+' '+(y-20*s)+' L'+(x-13*s)+' '+(y-20*s)+' Z" fill="'+c+'" stroke="#0f0620" stroke-width="2.5" stroke-linejoin="round"/>';
+}
+function dead_(x,y,s){
+  return '<path d="M'+x+' '+y+' L'+x+' '+(y-32*s)+' M'+x+' '+(y-13*s)+' l'+(-11*s)+' '+(-9*s)+
+  ' M'+x+' '+(y-20*s)+' l'+(10*s)+' '+(-9*s)+' M'+x+' '+(y-28*s)+' l'+(-6*s)+' '+(-7*s)+
+  '" stroke="#221240" stroke-width="'+(3.2*s)+'" stroke-linecap="round" fill="none"/>';
+}
+function fern_(x,y,s,c){
+  var out='<path d="M'+x+' '+y+' C'+(x+1*s)+' '+(y-16*s)+' '+(x+3*s)+' '+(y-28*s)+' '+(x+11*s)+' '+(y-33*s)+
+    ' C'+(x+19*s)+' '+(y-36*s)+' '+(x+21*s)+' '+(y-27*s)+' '+(x+14*s)+' '+(y-26*s)+
+    '" fill="none" stroke="'+c+'" stroke-width="'+(3*s)+'" stroke-linecap="round"/>';
+  for(var i=0;i<4;i++){
+    var t=y-4*s-i*6*s;
+    out+='<path d="M'+(x+0.6*s*i)+' '+t+' l'+(-7+i)*s*0.9+' '+(-4*s)+'" stroke="'+c+'" stroke-width="'+(2*s)+'" stroke-linecap="round" opacity=".85"/>';
+  }
+  return out;
+}
+function drip_(x,y,s,c){
+  return '<path d="M'+x+' '+y+' q'+(2*s)+' '+(6*s)+' 0 '+(9*s)+' q'+(-2*s)+' '+(-3*s)+' 0 '+(-9*s)+'" fill="'+c+'" opacity=".8"/>';
+}
+
+/* ---------- THE TEN ELDERS — fully drawn, three moods ---------- */
+function bossFrag(W,cx,cy,s,mood){
+  var cap=W.cap, glow=W.glow, dk="#0f0620", stalk="#e8d8c0";
+  var open = mood!=="sleep";
+  function brow(x1,x2,y2,tilt){
+    return '<path d="M'+x1+' '+y2+' L'+x2+' '+(y2+tilt)+'" stroke="'+dk+'" stroke-width="'+(3.2*s)+'" stroke-linecap="round"/>';
+  }
+  function eye(x,y,r){
+    if(mood==="beaten") return '<path d="M'+(x-r)+' '+y+' L'+(x+r)+' '+(y-r)+' M'+(x-r)+' '+(y-r)+' L'+(x+r)+' '+y+'" stroke="'+dk+'" stroke-width="'+(2.6*s)+'" stroke-linecap="round"/>';
+    if(!open) return '<path d="M'+(x-r)+' '+y+' Q'+x+' '+(y+r*0.9)+' '+(x+r)+' '+y+'" stroke="'+dk+'" stroke-width="'+(2.8*s)+'" fill="none" stroke-linecap="round"/>';
+    return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+dk+'"/><circle cx="'+(x+r*0.3)+'" cy="'+(y-r*0.3)+'" r="'+(r*0.32)+'" fill="#fff"/>';
+  }
+  var g='<g transform="translate('+cx+','+cy+') scale('+s+')">';
+  switch(W.id){
+   case 1: /* THE ELDER CAP — vast wrinkled dome, gill beard */
+    g+='<rect x="-14" y="6" width="28" height="30" rx="10" fill="'+stalk+'" stroke="'+dk+'" stroke-width="3"/>'
+     +'<path d="M-38 8 A38 30 0 0 1 38 8 Z" fill="'+cap+'" stroke="'+dk+'" stroke-width="3.4"/>'
+     +'<path d="M-30 -4 Q-16 -12 0 -12 M4 -18 Q18 -16 28 -8" stroke="rgba(0,0,0,.25)" stroke-width="3" fill="none" stroke-linecap="round"/>'
+     +'<ellipse cx="-14" cy="-10" rx="6" ry="4.4" fill="'+glow+'" opacity=".85"/><ellipse cx="18" cy="-4" rx="4.6" ry="3.4" fill="'+glow+'" opacity=".7"/>'
+     +'<path d="M-24 8 l3 9 M-12 8 l2 11 M0 8 l0 12 M12 8 l-2 11 M24 8 l-3 9" stroke="'+dk+'" stroke-width="2.6" stroke-linecap="round" opacity=".8"/>'
+     +(open?brow(-18,-6,12,3)+brow(18,6,12,3):"")
+     +eye(-10,18,3.4)+eye(10,18,3.4);
+    break;
+   case 2: /* MOTHER FROND — fern-crowned, serene */
+    g+='<rect x="-12" y="4" width="24" height="32" rx="9" fill="'+stalk+'" stroke="'+dk+'" stroke-width="3"/>'
+     +'<path d="M-30 6 A30 26 0 0 1 30 6 Z" fill="'+cap+'" stroke="'+dk+'" stroke-width="3.2"/>'
+     +fern_(-26,2,1.1,glow)+fern_(14,0,1.25,glow)+fern_(-4,-6,0.9,glow)
+     +'<ellipse cx="10" cy="-8" rx="4.6" ry="3.4" fill="'+glow+'" opacity=".8"/>'
+     +eye(-9,16,3)+eye(9,16,3)
+     +'<path d="M-5 26 Q0 29 5 26" stroke="'+dk+'" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
+    break;
+   case 3: /* THE GRINNING CAP — tilted, mad, all teeth */
+    g+='<g transform="rotate(-8)"><rect x="-12" y="4" width="24" height="30" rx="9" fill="'+stalk+'" stroke="'+dk+'" stroke-width="3"/>'
+     +'<path d="M-32 6 A32 26 0 0 1 32 6 Z" fill="'+cap+'" stroke="'+dk+'" stroke-width="3.2"/>'
+     +'<ellipse cx="-12" cy="-8" rx="5" ry="3.8" fill="'+glow+'" opacity=".85"/>'
+     +(open?brow(-16,-5,8,4)+brow(16,5,8,4):"")
+     +eye(-10,13,3.2)+eye(10,13,3.2)
+     +'<path d="M-14 22 Q0 30 14 22 Q7 27 0 27 Q-7 27 -14 22 Z" fill="#fff" stroke="'+dk+'" stroke-width="2.4"/>'
+     +'<path d="M-7 24 l0 3 M0 26 l0 3 M7 24 l0 3" stroke="'+dk+'" stroke-width="1.8"/></g>';
+    break;
+   case 4: /* OLD MULCH — a heap that woke up */
+    g+='<path d="M-34 30 Q-30 2 -10 -2 Q0 -16 14 -6 Q34 -8 32 12 Q40 26 26 30 Z" fill="#4a3520" stroke="'+dk+'" stroke-width="3.2" stroke-linejoin="round"/>'
+     +'<path d="M-20 6 l8 -5 M2 -4 l7 -5 M18 4 l8 -3" stroke="'+glow+'" stroke-width="2.6" stroke-linecap="round" opacity=".7"/>'
+     +'<ellipse cx="-8" cy="-2" rx="5" ry="3.4" fill="'+cap+'" opacity=".9"/><ellipse cx="16" cy="14" rx="4" ry="2.8" fill="'+cap+'" opacity=".8"/>'
+     +eye(-8,16,3)+eye(8,14,3.4)
+     +'<path d="M-4 24 Q2 26 8 23" stroke="'+dk+'" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
+    break;
+   case 5: /* THE DROWNED KIN — waterline face, dripping */
+    g+='<rect x="-12" y="2" width="24" height="32" rx="9" fill="#cfd8e8" stroke="'+dk+'" stroke-width="3"/>'
+     +'<path d="M-30 4 A30 26 0 0 1 30 4 Z" fill="'+cap+'" stroke="'+dk+'" stroke-width="3.2"/>'
+     +'<path d="M-30 4 Q-10 9 0 4 Q12 -1 30 4" stroke="#9fd8ff" stroke-width="2.6" fill="none" opacity=".9"/>'
+     +drip_(-18,6,1.2,"#9fd8ff")+drip_(8,8,1.4,"#9fd8ff")+drip_(22,4,1,"#9fd8ff")
+     +eye(-9,16,3)+eye(9,16,3)
+     +'<path d="M-4 26 Q0 24 4 26" stroke="'+dk+'" stroke-width="2.2" fill="none" stroke-linecap="round"/>';
+    break;
+   case 6: /* CINDER QUEEN — crowned in embers */
+    g+='<rect x="-11" y="4" width="22" height="30" rx="8" fill="#3a2418" stroke="'+dk+'" stroke-width="3"/>'
+     +'<path d="M-26 8 L-18 -18 L-8 -4 L0 -24 L8 -4 L18 -18 L26 8 Z" fill="'+cap+'" stroke="'+dk+'" stroke-width="3" stroke-linejoin="round"/>'
+     +'<circle cx="-18" cy="-20" r="2.6" fill="'+glow+'"/><circle cx="0" cy="-27" r="3" fill="'+glow+'"/><circle cx="18" cy="-20" r="2.6" fill="'+glow+'"/>'
+     +(open?brow(-14,-4,10,3.4)+brow(14,4,10,3.4):"")
+     +'<path d="M-13 15 L-5 17 M13 15 L5 17" stroke="'+dk+'" stroke-width="3" stroke-linecap="round"/>'
+     +eye(-9,19,2.6)+eye(9,19,2.6);
+    break;
+   case 7: /* THE PALE WATCHER — one vast eye */
+    g+='<rect x="-12" y="6" width="24" height="30" rx="9" fill="#dce8f4" stroke="'+dk+'" stroke-width="3"/>'
+     +'<path d="M-32 8 A32 28 0 0 1 32 8 Z" fill="'+cap+'" stroke="'+dk+'" stroke-width="3.2"/>'
+     +'<ellipse cx="14" cy="-10" rx="5" ry="3.6" fill="#fff" opacity=".8"/>'
+     +(mood==="sleep"
+       ? '<path d="M-10 16 Q0 24 10 16" stroke="'+dk+'" stroke-width="3" fill="none" stroke-linecap="round"/>'
+       : '<circle cx="0" cy="16" r="9" fill="#fff" stroke="'+dk+'" stroke-width="2.6"/><circle cx="0" cy="16" r="4.4" fill="#4a90d8"/><circle cx="0" cy="16" r="1.8" fill="'+dk+'"/><circle cx="1.6" cy="14.4" r="1" fill="#fff"/>');
+    break;
+   case 8: /* THE LISTENER — ear-flapped, mouthless */
+    g+='<rect x="-11" y="6" width="22" height="28" rx="8" fill="'+stalk+'" stroke="'+dk+'" stroke-width="3"/>'
+     +'<path d="M-26 8 A26 22 0 0 1 26 8 Z" fill="'+cap+'" stroke="'+dk+'" stroke-width="3"/>'
+     +'<path d="M-26 4 Q-40 -2 -36 12 Q-33 20 -24 14 Z" fill="'+cap+'" stroke="'+dk+'" stroke-width="2.8"/>'
+     +'<path d="M26 4 Q40 -2 36 12 Q33 20 24 14 Z" fill="'+cap+'" stroke="'+dk+'" stroke-width="2.8"/>'
+     +'<path d="M-33 8 q3 3 0 6 M33 8 q-3 3 0 6" stroke="'+dk+'" stroke-width="1.8" fill="none"/>'
+     +eye(-8,16,3.6)+eye(8,16,3.6);
+    break;
+   case 9: /* THE HIVE-MOTHER — honeycomb cap, six eyes */
+    g+='<rect x="-12" y="6" width="24" height="28" rx="9" fill="'+stalk+'" stroke="'+dk+'" stroke-width="3"/>'
+     +'<path d="M-30 8 A30 25 0 0 1 30 8 Z" fill="'+cap+'" stroke="'+dk+'" stroke-width="3.2"/>'
+     +'<path d="M-18 -2 l5 -3 5 3 0 6 -5 3 -5 -3 Z M2 -6 l5 -3 5 3 0 6 -5 3 -5 -3 Z M-6 -12 l4 -2 4 2 0 5 -4 2 -4 -2 Z" fill="none" stroke="'+dk+'" stroke-width="1.8" opacity=".65"/>'
+     +eye(-12,14,2.2)+eye(0,13,2.2)+eye(12,14,2.2)
+     +eye(-7,20,1.8)+eye(7,20,1.8)
+     +'<circle cx="0" cy="25" r="1.6" fill="'+dk+'"/>';
+    break;
+   default: /* THE OLD ONE — cracked gold, rune-lidded */
+    g+='<rect x="-13" y="6" width="26" height="30" rx="9" fill="'+stalk+'" stroke="'+dk+'" stroke-width="3"/>'
+     +'<path d="M-36 8 A36 30 0 0 1 36 8 Z" fill="'+cap+'" stroke="'+dk+'" stroke-width="3.4"/>'
+     +'<path d="M-20 -8 l6 5 -3 6 M14 -12 l-4 6 5 5" stroke="'+dk+'" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".7"/>'
+     +'<path d="M-6 -20 l3 3 M8 3 l4 -2" stroke="'+glow+'" stroke-width="2.2" stroke-linecap="round" opacity=".9"/>'
+     +'<path d="M-26 32 q6 5 12 0 M14 32 q6 5 12 0" stroke="'+glow+'" stroke-width="2.4" fill="none" opacity=".55"/>'
+     +eye(-10,17,3.2)+eye(10,17,3.2)
+     +(open?brow(-17,-5,10,2.6)+brow(17,5,10,2.6):"");
+  }
+  return g+'</g>';
+}
+window.__bossFrag=bossFrag;
+window.bossArt=function(W,mood,size){
+  size=size||96;
+  return '<svg viewBox="-48 -40 96 88" style="width:'+size+'px;height:'+(size*0.92)+'px;overflow:visible">'+
+    bossFrag(W,0,0,1,mood||"angry")+'</svg>';
+};
+
+/* ---------- ten unique covers, each foreshadowing its Elder ---------- */
 function worldArt(W){
   var g='<svg viewBox="0 0 300 130" preserveAspectRatio="xMidYMax slice">';
   g+='<defs><radialGradient id="wg'+W.id+'" cx="50%" cy="90%" r="70%">'+
@@ -1577,19 +1942,75 @@ function worldArt(W){
      '<stop offset="1" stop-color="'+W.glow+'" stop-opacity="0"/></radialGradient></defs>';
   g+='<rect width="300" height="130" fill="'+W.back+'"/>';
   g+='<rect width="300" height="130" fill="url(#wg'+W.id+')"/>';
-  /* far silhouettes */
-  for(var i=0;i<7;i++){
-    var x=18+i*44+((i*29)%17), s=.42+((i*7)%5)/16;
-    g+='<g opacity=".33">'+mush(x,112,s,"#0f0620",W.glow,0)+'</g>';
-  }
-  /* hero cluster */
-  g+=mush(96,120,1.0,W.cap,W.glow,-4);
-  g+=mush(150,124,1.35,W.cap,W.glow,2);
-  g+=mush(202,118,.86,W.cap,W.glow,6);
-  /* floating spores */
-  for(var k=0;k<9;k++){
-    var sx=20+((k*61)%270), sy=18+((k*37)%70), rr=1.4+((k*13)%3)*.7;
-    g+='<circle cx="'+sx+'" cy="'+sy+'" r="'+rr+'" fill="'+W.glow+'" opacity=".55"/>';
+  var dk="#0f0620", loom='<g opacity=".30">'+bossFrag(W,235,66,1.15,"sleep")+'</g>';
+  switch(W.id){
+   case 1: /* misty hollow, trio + looming Elder Cap */
+    g+='<ellipse cx="150" cy="130" rx="180" ry="26" fill="#160b28" opacity=".7"/>'+loom
+     +'<g opacity=".4">'+mush(38,116,.5,"#0c0518",W.glow,-6)+mush(272,120,.44,"#0c0518",W.glow,8)+'</g>'
+     +mush(84,124,.95,W.cap,W.glow,-5)+mush(140,127,1.28,W.cap,W.glow,2)+mush(192,122,.8,W.cap,W.glow,7)
+     +'<rect y="88" width="300" height="16" fill="'+W.glow+'" opacity=".05"/>';
+    break;
+   case 2: /* fern jungle, Mother Frond looms */
+    g+=loom+fern_(30,126,1.6,W.glow)+fern_(66,128,2.1,W.glow)+fern_(255,126,1.8,W.glow)+fern_(120,127,1.4,W.glow)
+     +mush(96,126,.85,W.cap,W.glow,-4)+mush(160,128,1.1,W.cap,W.glow,3)
+     +'<circle cx="200" cy="52" r="2.4" fill="'+W.glow+'" opacity=".7"/><circle cx="52" cy="40" r="2" fill="'+W.glow+'" opacity=".6"/>';
+    break;
+   case 3: /* dark field of glowcaps, the Grin floating huge */
+    g+='<g opacity=".5">'+bossFrag(W,150,52,1.5,"angry")+'</g>';
+    for(var i3=0;i3<9;i3++) g+=mush(22+i3*33,124+(i3%3)*3,.42+(i3%3)*.14,(i3%2? W.cap:"#3a2566"),W.glow,(i3%2?6:-6));
+    break;
+   case 4: /* cellar: beams, drips, shelf fungus, mulch heap */
+    g+='<rect x="0" y="0" width="300" height="10" fill="#241028" stroke="'+dk+'" stroke-width="2"/>'
+     +'<rect x="40" y="0" width="10" height="130" fill="#241028" stroke="'+dk+'" stroke-width="2" opacity=".8"/>'
+     +'<rect x="230" y="0" width="10" height="130" fill="#241028" stroke="'+dk+'" stroke-width="2" opacity=".8"/>'
+     +drip_(120,10,1.6,W.glow)+drip_(180,10,1.2,W.glow)+drip_(70,10,1.3,W.glow)
+     +'<path d="M50 60 A16 8 0 0 1 50 76 Z M240 46 A14 7 0 0 1 240 60 Z" fill="'+W.cap+'" stroke="'+dk+'" stroke-width="2.4"/>'
+     +'<g opacity=".85">'+bossFrag(W,150,84,1.2,"sleep")+'</g>'
+     +mush(80,126,.7,W.cap,W.glow,-6)+mush(215,124,.6,W.cap,W.glow,5);
+    break;
+   case 5: /* weeping roots + pool, eyes in the water */
+    g+='<path d="M30 0 C40 40 20 70 34 120 M70 0 C60 50 84 80 74 122 M250 0 C262 44 238 84 252 124" stroke="#1b0f31" stroke-width="9" fill="none" stroke-linecap="round"/>'
+     +'<path d="M30 0 C40 40 20 70 34 120 M250 0 C262 44 238 84 252 124" stroke="'+W.glow+'" stroke-width="2" fill="none" opacity=".25"/>'
+     +'<ellipse cx="160" cy="118" rx="80" ry="12" fill="#0e2338" stroke="'+dk+'" stroke-width="2.5"/>'
+     +'<ellipse cx="160" cy="118" rx="56" ry="7" fill="none" stroke="'+W.glow+'" stroke-width="1.6" opacity=".5"/>'
+     +'<g opacity=".55">'+bossFrag(W,160,96,0.9,"sleep")+'</g>'
+     +mush(60,126,.8,W.cap,W.glow,-4)+mush(268,127,.66,W.cap,W.glow,6);
+    break;
+   case 6: /* burnt wastes: dead trees, embers, the Queen far off */
+    g+=dead_(50,124,1.3)+dead_(110,126,.9)+dead_(262,124,1.15)
+     +'<g opacity=".45">'+bossFrag(W,196,70,1.3,"angry")+'</g>'
+     +mush(150,127,.8,W.cap,W.glow,-3)
+     +'<circle cx="80" cy="60" r="2.2" fill="'+W.glow+'"/><circle cx="140" cy="38" r="1.8" fill="'+W.glow+'" opacity=".8"/><circle cx="230" cy="30" r="2.4" fill="'+W.glow+'" opacity=".9"/>'
+     +'<rect y="112" width="300" height="18" fill="#1b0a04" opacity=".8"/>';
+    break;
+   case 7: /* peaks: ridge, pines, snow, the single eye on the summit */
+    g+='<path d="M0 96 L70 34 L120 78 L180 22 L240 72 L300 40 L300 130 L0 130 Z" fill="#1a2a4e" stroke="'+dk+'" stroke-width="2.5"/>'
+     +'<path d="M70 34 L84 48 L58 48 Z M180 22 L196 40 L164 40 Z" fill="#e8f2fc" stroke="'+dk+'" stroke-width="2"/>'
+     +'<g opacity=".6">'+bossFrag(W,180,64,0.78,"angry")+'</g>'
+     +pine_(36,124,1,"#16304a")+pine_(120,127,1.25,"#16304a")+pine_(262,125,1.05,"#16304a")
+     +mush(200,127,.6,W.cap,W.glow,4);
+    for(var i7=0;i7<10;i7++) g+='<circle cx="'+(15+i7*30)+'" cy="'+(20+(i7*47)%70)+'" r="1.6" fill="#fff" opacity=".8"/>';
+    break;
+   case 8: /* the hush: willow curtain, moths, the Listener */
+    for(var i8=0;i8<8;i8++)
+      g+='<path d="M'+(20+i8*38)+' 0 q6 60 -3 116" stroke="#241546" stroke-width="5" fill="none" stroke-linecap="round" opacity=".8"/>';
+    g+='<g opacity=".5">'+bossFrag(W,150,70,1.25,"sleep")+'</g>'
+     +'<path d="M84 44 q-7 -7 -13 0 q6 7 13 0 Z M228 60 q7 -7 13 0 q-6 7 -13 0 Z" fill="#d8ccf4" stroke="'+dk+'" stroke-width="1.8" opacity=".9"/>'
+     +mush(70,126,.7,W.cap,W.glow,-5)+mush(240,127,.62,W.cap,W.glow,6);
+    break;
+   case 9: /* the deep: stalactites, eye clusters, honey glow */
+    g+='<path d="M0 0 L28 0 L18 34 Z M60 0 L92 0 L78 46 Z M130 0 L158 0 L146 30 Z M210 0 L244 0 L228 52 Z M270 0 L300 0 L288 30 Z" fill="#0a1f1c" stroke="'+dk+'" stroke-width="2"/>'
+     +'<g opacity=".6">'+bossFrag(W,150,84,1.05,"sleep")+'</g>';
+    for(var i9=0;i9<5;i9++)
+      g+='<circle cx="'+(30+i9*60)+'" cy="'+(64+(i9%2)*18)+'" r="2" fill="'+W.glow+'"/><circle cx="'+(38+i9*60)+'" cy="'+(66+(i9%2)*18)+'" r="2" fill="'+W.glow+'"/>';
+    g+=mush(60,127,.6,W.cap,W.glow,-4)+mush(250,126,.7,W.cap,W.glow,5);
+    break;
+   default: /* the first thread: one golden strand to the Old One */
+    g+='<path d="M0 122 C60 118 90 96 150 92 C210 88 240 66 300 58" stroke="'+dk+'" stroke-width="8" fill="none" stroke-linecap="round"/>'
+     +'<path d="M0 122 C60 118 90 96 150 92 C210 88 240 66 300 58" stroke="'+W.glow+'" stroke-width="3.4" fill="none" stroke-linecap="round" opacity=".9"/>'
+     +'<g opacity=".75">'+bossFrag(W,238,54,1.35,"sleep")+'</g>'
+     +mush(52,124,.72,W.cap,W.glow,-4)
+     +'<circle cx="110" cy="104" r="2.4" fill="'+W.glow+'"/><circle cx="180" cy="88" r="2" fill="'+W.glow+'" opacity=".8"/>';
   }
   return g+'</svg>';
 }
@@ -1692,15 +2113,9 @@ function nodeSprite(W,id,done){
        '<circle cx="37" cy="90" r="3.6" fill="'+stalk+'" stroke="'+dark+'" stroke-width="2.5"/>'+
        pc(44,52,3.2,2.6)+eyes(31,39,72); }
      break;
-   case "B": b=stk(27,52,26,36,10)+
-     '<path d="M5 52 A35 28 0 0 1 75 52 Z" fill="'+cap+'" stroke="'+dark+'" stroke-width="3.4"/>'+
-     '<path d="M5 52 Q40 63 75 52" stroke="'+dark+'" stroke-width="2.6" fill="none"/>'+
-     '<path d="M16 40 Q24 32 34 32 M46 30 Q56 30 63 38" stroke="rgba(255,255,255,.4)" stroke-width="2.6" fill="none" stroke-linecap="round"/>'+
-     pc(20,42,4.6,3.6)+pc(58,38,5,4)+pc(40,30,4,3.2)+
-     (done
-       ?'<circle cx="33" cy="64" r="3.2" fill="'+dark+'"/><circle cx="47" cy="64" r="3.2" fill="'+dark+'"/><path d="M30 76 Q40 82 50 76" stroke="'+dark+'" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
-       :'<path d="M28 64 Q33 68 38 64 M42 64 Q47 68 52 64" stroke="'+dark+'" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M27 58 L37 60 M53 58 L43 60" stroke="'+dark+'" stroke-width="2.4" stroke-linecap="round"/>')+
-     '<path d="M32 80 Q40 86 48 80" stroke="'+dark+'" stroke-width="2" fill="none" opacity=".5"/>'; break;
+   case "B":
+     b=(window.__bossFrag?window.__bossFrag(W,40,52,0.86,done?"beaten":"sleep"):"");
+     break;
    default: b=stk(32,50,16,34,8)+dome(40,52,56,26)+eyes(34,46,62);
   }
   return '<svg class="nodeart" viewBox="0 0 80 100"><ellipse cx="40" cy="92" rx="23" ry="5" fill="rgba(0,0,0,.35)"/>'+b+'</svg>';
@@ -1837,10 +2252,11 @@ window.__renderLevels=function(w){
 (function(){
 "use strict";
 function showScreen(id){
-  ["scWorlds","scLevels","scGame"].forEach(function(s){
+  ["scWorlds","scLevels","scGame","scStore"].forEach(function(s){
     var el=document.getElementById(s); if(el) el.classList.toggle("on", s===id);
   });
   window.scrollTo(0,0);
+  if(id!=="scStore"){}
   var GW=(window.WORLDS&&window.__curWorld)?window.WORLDS[window.__curWorld-1]:null;
   if(window.__buildGrove) window.__buildGrove(id==="scWorlds"?null:GW);
   if(window.__decorateHeaders) window.__decorateHeaders(id==="scWorlds"?null:GW);
@@ -1867,6 +2283,7 @@ on("toDaily",   function(){ if(window.__game) window.__game.daily(); showScreen(
 
 /* ============ FULL-PAGE LIVING GROVE ============ */
 window.__buildGrove=function(W){
+  document.documentElement.style.setProperty("--wglow",(W&&W.glow)||"#a8ffe0");
   var host=document.getElementById("grove"); if(!host||!window.__mush) return;
   var caps = W ? [W.cap] : ["#ff5fa8","#c8ff5f","#ffd84d","#7fd4ff"];
   var glow = W ? W.glow : "#a8ffe0";
@@ -2005,6 +2422,59 @@ window.__buildScene(window.WORLDS ? window.WORLDS[2] : null);
 if(window.__buildGrove) window.__buildGrove(null);
 if(window.__decorateHeaders) window.__decorateHeaders(null);
 })();
+
+/* ---------- bottom tab bar + store ---------- */
+(function(){
+  function on(id,fn){ var e=document.getElementById(id); if(e) e.addEventListener("click",fn); }
+  function setTab(id){
+    ["tabGrove","tabPlay","tabStore","tabRecord"].forEach(function(t){
+      var e=document.getElementById(t); if(e) e.classList.toggle("on",t===id);
+    });
+  }
+  function renderStore(){
+    var b=document.getElementById("balSpores");
+    if(b&&window.__game) b.textContent=window.__game.balance();
+    var st=document.getElementById("storeTitle");
+    if(st&&window.bubbleText&&!st.firstChild)
+      st.innerHTML='<svg class="plate" viewBox="0 0 300 74" preserveAspectRatio="none">'+
+        '<path d="M8 40 C8 14 40 6 150 6 C260 6 292 14 292 40 C292 64 260 70 150 70 C40 70 8 64 8 40 Z" '+
+        'fill="rgba(15,6,32,.55)" stroke="#b06a00" stroke-width="3"/></svg>'+
+        window.bubbleText("STORE",{fill:"#ffe89a",fill2:"#ffb31c",outline:"#0f0620",extrude:"#b06a00"});
+  }
+  window.__showScreen && (function(){
+    var orig=window.__showScreen;
+  })();
+  on("tabGrove",function(){ if(window.__renderWorlds) window.__renderWorlds(); window.__showScreen("scWorlds"); setTab("tabGrove"); });
+  on("tabPlay",function(){ window.__showScreen("scGame"); setTab("tabPlay"); });
+  on("tabStore",function(){ renderStore(); window.__showScreen("scStore"); setTab("tabStore"); });
+  on("tabRecord",function(){ var s=document.getElementById("stats"); if(s) s.click(); setTab("tabRecord");
+    setTimeout(function(){setTab("tabPlay")},400); });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-buy]"),function(btn){
+    btn.addEventListener("click",function(){
+      var cost=+btn.dataset.cost, what=btn.dataset.buy, msg=document.getElementById("shopMsg");
+      var left=window.__game.spend(cost);
+      if(left<0){ if(msg) msg.textContent="Not enough Spores — win tangles to earn more!"; return; }
+      if(what==="hints") window.__game.grant("hints");
+      if(what==="gold"){
+        document.getElementById("meter").firstElementChild&&0;
+        document.querySelector(".meter i").style.background="linear-gradient(90deg,#ffd84d,#ffb31c)";
+        try{ var s=JSON.parse(localStorage.getItem("relay.v2"))||{}; s.gold=1; localStorage.setItem("relay.v2",JSON.stringify(s)); }catch(e){}
+      }
+      if(msg) msg.textContent="Bought! 🍄 "+left+" left";
+      renderStore();
+      if(window.__game && typeof window.__game.sfx==="function") window.__game.sfx();
+    });
+  });
+  var mb=document.getElementById("muteBtn");
+  if(mb) mb.addEventListener("click",function(){
+    var m=window.__game.toggleMute();
+    var w=document.getElementById("muteWave"); if(w) w.style.display=m?"none":"";
+    mb.style.opacity=m?".55":"1";
+  });
+  try{ var s0=JSON.parse(localStorage.getItem("relay.v2"))||{};
+    if(s0.gold) document.querySelector(".meter i").style.background="linear-gradient(90deg,#ffd84d,#ffb31c)"; }catch(e){}
+})();
+
 </script>
 </body>
 </html>
