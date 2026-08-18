@@ -40,7 +40,10 @@ setTimeout(()=>{
  ok("exactly one source tile", [...board.children].filter(c=>c.classList.contains("src")).length===1);
 
  console.log("\n--- SPEC AGREEMENT ---");
- ok("par matches independent implementation", parseInt(d.getElementById("pr").textContent,10)===REF.par, d.getElementById("pr").textContent+" vs "+REF.par);
+ var goalTxt=d.getElementById("pr").textContent;
+ var goalNum=parseInt(goalTxt.replace(/[^0-9]/g,""),10);
+ ok("3-star goal is shown and beatable", goalNum>=REF.par, goalTxt+" vs min turns "+REF.par);
+ ok("3-star goal is not absurdly loose", goalNum<=Math.ceil(REF.par*1.6)+6, goalTxt);
 
  console.log("\n--- ARCHIVE BOUNDS (day 1) ---");
  const at=d.querySelector('[data-mode="archive"]');
@@ -58,7 +61,7 @@ setTimeout(()=>{
  d.querySelector('[data-mode="endless"]').dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
  const n1=board.children.length;
  ok("endless builds a valid square grid", [25,49,81].includes(n1), n1+" cells / "+d.getElementById("gridLabel").textContent);
- ok("endless par is positive", parseInt(d.getElementById("pr").textContent,10)>0, d.getElementById("pr").textContent);
+ ok("endless shows a positive goal", parseInt(d.getElementById("pr").textContent.replace(/[^0-9]/g,""),10)>0, d.getElementById("pr").textContent);
 
  console.log("\n--- OPTIMAL SOLVE (daily) ---");
  d.querySelector('[data-mode="daily"]').dispatchEvent(new w.MouseEvent("click",{bubbles:true}));
@@ -77,7 +80,7 @@ setTimeout(()=>{
    console.log("\n--- SHARE CARD ---");
    console.log(copied);
    ok("share reveals no tile/board data", copied && !/mask|solved|solution|\b[0-9]{6,}\b/.test(copied));
-   ok("share includes score + par", copied.includes("par"));
+   ok("share includes stars + spins", /[\u2605\u2606]/.test(copied) && copied.includes("spins"));
    const s=JSON.parse(w.localStorage.getItem("relay.v2")||"{}");
    ok("stats persisted", s.solved===1&&s.streak===1&&s.best===0, JSON.stringify({solved:s.solved,streak:s.streak,best:s.best}));
    console.log("\n--- RUNTIME ---");
