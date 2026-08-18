@@ -48,7 +48,7 @@ body{
   -webkit-font-smoothing:antialiased; -webkit-tap-highlight-color:transparent; position:relative;
 }
 /* twinkling stars */
-body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
   background-image:
     radial-gradient(2px 2px at 12% 14%, #fff 50%, transparent 55%),
     radial-gradient(2px 2px at 68% 8%,  #fff 50%, transparent 55%),
@@ -324,6 +324,49 @@ footer{font-size:.7rem;font-weight:600;color:#b9a4ee;text-align:center;line-heig
 .vineband{position:absolute;left:0;right:0;height:14px;pointer-events:none;z-index:3}
 .vineband.top{top:-9px} .vineband.bot{bottom:-9px;transform:scaleY(-1)}
 
+
+/* ============ FULL-PAGE LIVING GROVE ============ */
+#grove{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#grove svg{position:absolute;inset:0;width:100%;height:100%}
+#grove .ff{position:absolute}
+.gsw{transform-box:fill-box;transform-origin:50% 100%;animation:gsway 7s ease-in-out infinite alternate}
+.gsw.s2{animation-duration:9.5s;animation-delay:-3s}
+.gsw.s3{animation-duration:12s;animation-delay:-6s}
+@keyframes gsway{from{transform:rotate(-1.8deg)}to{transform:rotate(2.1deg)}}
+.gr-rise{animation:grise linear infinite}
+@keyframes grise{0%{transform:translateY(0);opacity:0}12%{opacity:.8}85%{opacity:.55}100%{transform:translateY(-200px);opacity:0}}
+.gpulse{animation:gcap 3.6s ease-in-out infinite alternate}
+@keyframes gcap{from{opacity:.5}to{opacity:1}}
+
+/* ============ LIT VINE ============ */
+.vlit{filter:drop-shadow(0 0 7px var(--wglow,#a8ffe0));animation:vpulse 1.6s ease-in-out infinite alternate}
+@keyframes vpulse{from{opacity:.7}to{opacity:1}}
+
+/* ============ NODES = PURE SPRITES ============ */
+.lv,.lv.timed,.lv.secret,.lv.boss,.lv.done,.lv.done.timed,.lv.done.secret,.lv.done.boss{background:none;border:0;box-shadow:none;border-radius:0;padding:0}
+.lv{width:62px;height:76px;transform:translate(-50%,-50%) scale(var(--sc,1))}
+.lv:active:not(:disabled){transform:translate(-50%,-50%) scale(var(--sc,1)) translateY(3px);box-shadow:none}
+.lv.boss{width:88px;height:100px}
+.lv .nodeart{width:100%;height:100%;display:block;overflow:visible}
+.lv .lnum,.bossface{display:none}
+.lv.locked{filter:saturate(.3) brightness(.68);opacity:.9}
+.lv.done .nodeart{filter:drop-shadow(0 0 9px var(--wglow,#ffd84d))}
+.lnumchip{position:absolute;top:-4px;right:-8px;background:#fff;border:2.5px solid #0f0620;border-radius:999px;
+  min-width:21px;height:21px;font-size:.66rem;font-weight:800;color:#3a1f5c;display:grid;place-items:center;padding:0 4px}
+.lv .lstars{bottom:-15px}
+.llock{position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);font-size:.95rem}
+.lspore{top:-10px;left:-12px;right:auto}
+@keyframes npulse{from{opacity:.5}to{opacity:1}}
+.nodeart .pulse{animation:npulse 2.2s ease-in-out infinite alternate}
+
+/* ============ DECORATED HEADERS ============ */
+.hplate,.brand,.navrow{position:relative}
+.hdeco{position:absolute;inset:0;pointer-events:none;z-index:3}
+.hdeco>span{position:absolute}
+.hdeco svg{display:block;overflow:visible}
+.pp{position:absolute;width:5px;height:5px;border-radius:50%;
+  animation:flit 6s ease-in-out infinite, blinky 2.1s ease-in-out infinite}
+
 /* ---------- overlays ---------- */
 .ov{position:fixed;inset:0;z-index:40;display:none;place-items:center;padding:16px;
   background:rgba(20,8,60,.82);backdrop-filter:blur(6px);overflow-y:auto}
@@ -386,11 +429,12 @@ footer{font-size:.7rem;font-weight:600;color:#b9a4ee;text-align:center;line-heig
 </head>
 <body>
 
+<div id="grove" aria-hidden="true"></div>
 <div class="wrap">
 <!-- ============ WORLD SELECT ============ -->
 <section class="screen" id="scWorlds">
   <div class="hplate"><div id="worldsTitle"></div>
-    <div class="ptitle">Six groves. Wake them all.</div></div>
+    <div class="ptitle">Ten groves. Wake them all.</div></div>
   <div id="worldList"></div>
   <div class="ctl"><button id="toDaily">🍄 Daily tangle</button></div>
 </section>
@@ -1099,12 +1143,13 @@ function newBoard(){
     seed="relay-"+curKey; label="Past tangle #"+pickNo; code="";
   } else if(mode==="level"){
     var WW=window.WORLDS[curW-1];
-    N = (curL==="B") ? WW.N+1 : WW.N;
-    var lk = (curL==="S") ? "secret" : (curL==="B") ? "elder" : (curL==="T") ? "timed" : "l"+curL;
+    var isSecret = (typeof curL==="string" && curL.charAt(0)==="S");
+    N = (curL==="B") ? WW.N+(WW.bossHard||1) : isSecret ? WW.N+1 : WW.N;
+    var lk = isSecret ? curL.toLowerCase() : (curL==="B") ? "elder" : (curL==="T") ? "timed" : "l"+curL;
     seed="myco-w"+curW+"-"+lk;
-    label = (curL==="S") ? WW.secret : (curL==="B") ? WW.elder
+    label = isSecret ? WW.secret : (curL==="B") ? WW.elder
           : (curL==="T") ? "Against the clock" : WW.name;
-    curNo = (curL==="S") ? "★" : (curL==="B") ? "☠" : (curL==="T") ? "⏱" : curL;
+    curNo = isSecret ? "★" : (curL==="B") ? "☠" : (curL==="T") ? "⏱" : curL;
     isTimed = (curL==="T");
     /* generous but real: about 2.4s per tile */
     timeLimit = Math.round(N*N*2400);
@@ -1281,35 +1326,45 @@ window.__cityLight(saved);
 
 var WORLDS=[
  {id:1,name:"Damp Hollow",    flavor:"Where the first spores stir.",       N:5,
+  std:8, secrets:1, timed:false, bossHard:1,
   hue:158,cap:"#ff5fa8",back:"#1d1338",glow:"#6affc4",
-  secret:"The Whispering Ring", elder:"The Elder Cap",   twist:"Locked caps"},
+  secret:"The Whispering Ring", elder:"The Elder Cap",   twist:"a gentle first watch"},
  {id:2,name:"Fern Gully",     flavor:"Green light, and something humming.",N:6,
+  std:12, secrets:2, timed:true, bossHard:1,
   hue:96, cap:"#c8ff5f",back:"#16301f",glow:"#b6ff6a",
-  secret:"The Curled Frond",   elder:"Mother Frond",     twist:"One-way valves"},
+  secret:"The Curled Frond",   elder:"Mother Frond",     twist:"long roads, hidden turns"},
  {id:3,name:"Glowcap Grove",  flavor:"The caps here have opinions.",       N:6,
+  std:9, secrets:1, timed:false, bossHard:2,
   hue:300,cap:"#ff8ec4",back:"#2b1140",glow:"#ff7fd4",
-  secret:"The Blushing Hollow",elder:"The Grinning Cap", twist:"Twin hearts"},
+  secret:"The Blushing Hollow",elder:"The Grinning Cap", twist:"short road, cruel keeper"},
  {id:4,name:"Rot Cellar",     flavor:"Sweet decay. Mind your step.",       N:7,
+  std:14, secrets:3, timed:true, bossHard:1,
   hue:32, cap:"#ffb347",back:"#33200e",glow:"#ffc861",
-  secret:"The Sunken Larder",  elder:"Old Mulch",        twist:"Decoy strands"},
+  secret:"The Sunken Larder",  elder:"Old Mulch",        twist:"the deep larder run"},
  {id:5,name:"Weeping Roots",  flavor:"It drips, and it listens.",          N:7,
+  std:10, secrets:2, timed:true, bossHard:1,
   hue:200,cap:"#7fd4ff",back:"#0e2338",glow:"#8ee4ff",
-  secret:"The Still Pool",     elder:"The Drowned Kin",  twist:"Linked tiles"},
+  secret:"The Still Pool",     elder:"The Drowned Kin",  twist:"branches over water"},
  {id:6,name:"Emberfly Wastes",flavor:"Ash on the wind. Warm underfoot.",   N:7,
+  std:13, secrets:2, timed:true, bossHard:2,
   hue:18, cap:"#ff7a4d",back:"#3a1408",glow:"#ff9a5e",
-  secret:"The Cinder Ring",    elder:"Cinder Queen",     twist:"Burning strands"},
+  secret:"The Cinder Ring",    elder:"Cinder Queen",     twist:"a long burn, then the Queen"},
  {id:7,name:"Spore Peaks",    flavor:"Thin air. The threads freeze.",      N:8,
+  std:11, secrets:2, timed:true, bossHard:1,
   hue:206,cap:"#c8e4ff",back:"#111d3a",glow:"#dcefff",
-  secret:"The Frost Ring",     elder:"The Pale Watcher", twist:"Frozen tiles"},
+  secret:"The Frost Ring",     elder:"The Pale Watcher", twist:"the climb"},
  {id:8,name:"The Hush",       flavor:"Nothing here makes a sound.",        N:8,
+  std:8, secrets:1, timed:false, bossHard:2,
   hue:268,cap:"#b8a0ff",back:"#1a1030",glow:"#c9b6ff",
-  secret:"The Muted Ring",     elder:"The Listener",     twist:"Silent tiles"},
+  secret:"The Muted Ring",     elder:"The Listener",     twist:"short, and it is listening"},
  {id:9,name:"Chittering Deep",flavor:"Something down here is counting.",   N:9,
+  std:15, secrets:3, timed:true, bossHard:1,
   hue:172,cap:"#5fffd8",back:"#062b28",glow:"#7dffe4",
-  secret:"The Brood Ring",     elder:"The Hive-Mother",  twist:"Swarm tiles"},
+  secret:"The Brood Ring",     elder:"The Hive-Mother",  twist:"the longest tunnel"},
  {id:10,name:"The First Thread",flavor:"Everything is one thread down here.",N:9,
+  std:10, secrets:2, timed:true, bossHard:2,
   hue:272,cap:"#e0c46a",back:"#1a0f33",glow:"#ffe9a8",
-  secret:"The Origin",         elder:"The Old One",      twist:"All of it at once"}
+  secret:"The Origin",         elder:"The Old One",      twist:"all of it at once"}
 ];
 window.WORLDS=WORLDS;
 
@@ -1323,10 +1378,14 @@ window.__grove={get:function(){return P}, save:function(){save(P)}};
 function lid(w,l){ return w+"-"+l; }
 function starsOf(w,l){ return P.stars[lid(w,l)]||0; }
 function hasSpore(w,l){ return !!P.spore[lid(w,l)]; }
-function worldStars(w){ var t=0; for(var l=1;l<=12;l++) t+=starsOf(w,l);
-  t+=starsOf(w,"T")+starsOf(w,"S")+starsOf(w,"B"); return t; }
-function sporesIn(w){ var t=0; for(var l=1;l<=12;l++) if(hasSpore(w,l)) t++; return t; }
-function clearedIn(w){ var t=0; for(var l=1;l<=12;l++) if(starsOf(w,l)>0) t++; return t; }
+function worldStars(w){ var W=WORLDS[w-1], t=0;
+  for(var l=1;l<=W.std;l++) t+=starsOf(w,l);
+  if(W.timed) t+=starsOf(w,"T");
+  for(var s=1;s<=W.secrets;s++) t+=starsOf(w,"S"+s);
+  return t+starsOf(w,"B"); }
+function worldMax(w){ var W=WORLDS[w-1]; return (W.std+(W.timed?1:0)+W.secrets+1)*3; }
+function sporesIn(w){ var t=0,S=WORLDS[w-1].std; for(var l=1;l<=S;l++) if(hasSpore(w,l)) t++; return t; }
+function clearedIn(w){ var t=0,S=WORLDS[w-1].std; for(var l=1;l<=S;l++) if(starsOf(w,l)>0) t++; return t; }
 
 /* ---- unlock rules ---- */
 function worldUnlocked(w){
@@ -1336,16 +1395,24 @@ function worldUnlocked(w){
 function levelUnlocked(w,l){
   if(!worldUnlocked(w)) return false;
   if(l===1) return true;
-  if(l==="T") return clearedIn(w)>=6;           /* halfway through the world */
-  if(l==="S") return sporesIn(w)>=12;           /* every Golden Spore */
-  if(l==="B") return clearedIn(w)>=12;          /* all 12 tangles cleared */
+  var W=WORLDS[w-1];
+  if(l==="T") return !!W.timed && clearedIn(w)>=Math.ceil(W.std/2);
+  if(typeof l==="string" && l.charAt(0)==="S"){
+    var si=parseInt(l.slice(1),10)||1;
+    return sporesIn(w)>=Math.ceil(W.std*si/W.secrets);
+  }
+  if(l==="B") return clearedIn(w)>=W.std;
   return starsOf(w,l-1)>0;
 }
 window.__groveUnlocked=levelUnlocked;
 function reqText(w,l){
-  if(l==="T") return "Clear 6 tangles ("+clearedIn(w)+"/6)";
-  if(l==="S") return "Collect all 12 Golden Spores ("+sporesIn(w)+"/12)";
-  if(l==="B") return "Clear all 12 tangles ("+clearedIn(w)+"/12)";
+  var W=WORLDS[w-1];
+  if(l==="T"){var need=Math.ceil(W.std/2);return "Clear "+need+" tangles ("+clearedIn(w)+"/"+need+")";}
+  if(typeof l==="string" && l.charAt(0)==="S"){
+    var si=parseInt(l.slice(1),10)||1, needS=Math.ceil(W.std*si/W.secrets);
+    return "Gather "+needS+" Golden Spores ("+sporesIn(w)+"/"+needS+")";
+  }
+  if(l==="B") return "Clear all "+W.std+" tangles ("+clearedIn(w)+"/"+W.std+")";
   if(l===1) return "Beat "+WORLDS[w-2].elder;
   return "Clear tangle "+(l-1);
 }
@@ -1353,16 +1420,17 @@ function reqText(w,l){
 /* record a finish; returns {newSpore, unlockedSecret, unlockedElder, unlockedWorld} */
 window.__groveRecord=function(w,l,stars){
   var k=lid(w,l), was=P.stars[k]||0, hadSpore=!!P.spore[k];
-  var secretBefore=levelUnlocked(w,"S"), elderBefore=levelUnlocked(w,"B");
-  var worldBefore=w<6?worldUnlocked(w+1):true;
+  function nSecretsOpen(){var W=WORLDS[w-1],n=0;for(var i=1;i<=W.secrets;i++) if(levelUnlocked(w,"S"+i)) n++;return n;}
+  var secretBefore=nSecretsOpen(), elderBefore=levelUnlocked(w,"B");
+  var worldBefore=(w<WORLDS.length)?worldUnlocked(w+1):true;
   if(stars>was) P.stars[k]=stars;
   if(stars>=3 && typeof l==="number") P.spore[k]=true;
   save(P);
   return {
     newSpore: !hadSpore && !!P.spore[k],
-    unlockedSecret: !secretBefore && levelUnlocked(w,"S"),
+    unlockedSecret: nSecretsOpen()>secretBefore,
     unlockedElder:  !elderBefore  && levelUnlocked(w,"B"),
-    unlockedWorld:  !worldBefore  && (w<6) && worldUnlocked(w+1),
+    unlockedWorld:  !worldBefore  && (w<WORLDS.length) && worldUnlocked(w+1),
     stars: P.stars[k]||0
   };
 };
@@ -1422,8 +1490,8 @@ window.__renderWorlds=function(){
          '<div class="wname">'+W.name+'</div>'+
          '<div class="wflav">'+(un?W.flavor:"Sealed. "+ (W.id>1 ? "Beat "+WORLDS[i-1].elder+"." : ""))+'</div>'+
          '<div class="wrow">'+
-           '<span class="wstars">★ '+st+'<em>/45</em></span>'+
-           '<span class="wspore">🍄 '+sporesIn(W.id)+'<em>/12</em></span>'+
+           '<span class="wstars">★ '+st+'<em>/'+worldMax(W.id)+'</em></span>'+
+           '<span class="wspore">🍄 '+sporesIn(W.id)+'<em>/'+W.std+'</em></span>'+
            (un?'':'<span class="wlock">🔒</span>')+
          '</div>'+
        '</div></button>';
@@ -1438,60 +1506,195 @@ window.__renderWorlds=function(){
 };
 
 /* ---------- level map ---------- */
+
+/* Every level is its own mushroom. Sleeping until cleared; then it wakes. */
+function nodeSprite(W,id,done){
+  var cap=W.cap, glow=W.glow, dark="#0f0620", stalk="#efe2cc";
+  function pc(x,y,rx,ry){return '<ellipse cx="'+x+'" cy="'+y+'" rx="'+rx+'" ry="'+ry+'" fill="'+glow+'"'+(done?' class="pulse"':' opacity=".55"')+'/>'}
+  function stk(x,y,w2,ht,rx){return '<rect x="'+x+'" y="'+y+'" width="'+w2+'" height="'+ht+'" rx="'+rx+'" fill="'+stalk+'" stroke="'+dark+'" stroke-width="3"/>'}
+  function eyes(x1,x2,y){
+    return done
+      ? '<circle cx="'+x1+'" cy="'+y+'" r="2.5" fill="'+dark+'"/><circle cx="'+x2+'" cy="'+y+'" r="2.5" fill="'+dark+'"/>'+
+        '<path d="M'+(x1+1)+' '+(y+6)+' Q'+((x1+x2)/2)+' '+(y+9)+' '+(x2-1)+' '+(y+6)+'" stroke="'+dark+'" stroke-width="2" fill="none" stroke-linecap="round"/>'
+      : '<path d="M'+(x1-3)+' '+y+' Q'+x1+' '+(y+3)+' '+(x1+3)+' '+y+'" stroke="'+dark+'" stroke-width="2.3" fill="none" stroke-linecap="round"/>'+
+        '<path d="M'+(x2-3)+' '+y+' Q'+x2+' '+(y+3)+' '+(x2+3)+' '+y+'" stroke="'+dark+'" stroke-width="2.3" fill="none" stroke-linecap="round"/>';
+  }
+  function dome(cx,cy,w2,ht,tilt){
+    var g=tilt?'<g transform="rotate('+tilt+' '+cx+' '+cy+')">':'<g>';
+    return g+'<path d="M'+(cx-w2/2)+' '+cy+' A'+(w2/2)+' '+ht+' 0 0 1 '+(cx+w2/2)+' '+cy+' Z" fill="'+cap+'" stroke="'+dark+'" stroke-width="3"/></g>';
+  }
+  var b="";
+  switch(String(id)){
+   case "1": b=stk(32,50,16,34,8)+dome(40,52,56,26)+pc(28,40,4.5,3.5)+pc(48,34,5,4)+eyes(34,46,62); break;
+   case "2": b=stk(33,58,14,26,7)+'<path d="M21 60 C21 20 59 20 59 60 Z" fill="'+cap+'" stroke="'+dark+'" stroke-width="3"/>'+pc(33,38,4,3.2)+pc(46,30,4.5,3.6)+eyes(34,46,68); break;
+   case "3": b=stk(15,58,12,26,6)+stk(50,62,12,22,6)+dome(21,60,32,15)+dome(56,64,28,13)+pc(18,52,3.4,2.6)+pc(56,58,3,2.4)+eyes(18,26,66); break;
+   case "4": b=stk(35,48,10,38,5)+dome(40,50,68,17)+'<path d="M6 50 Q14 56 23 50 Q31 56 40 50 Q49 56 57 50 Q66 56 74 50" stroke="'+dark+'" stroke-width="2.6" fill="none"/>'+pc(24,42,4,3)+pc(54,40,4.4,3.2)+eyes(36,44,58); break;
+   case "5": b=stk(28,44,24,40,11)+dome(40,46,42,16)+pc(40,36,4,3)+eyes(33,47,58)+
+     '<g transform="translate(56,72)"><path d="M0 8 A7 7 0 1 1 10 8 Z" fill="'+glow+'" stroke="'+dark+'" stroke-width="2.4"/><path d="M3 8 A3 3 0 1 1 8 8" stroke="'+dark+'" stroke-width="1.6" fill="none"/></g>'; break;
+   case "6": b=stk(33,56,14,28,7)+'<path d="M40 12 Q56 32 63 56 L17 56 Q24 32 40 12 Z" fill="'+cap+'" stroke="'+dark+'" stroke-width="3" stroke-linejoin="round"/>'+pc(40,32,3.6,3)+pc(49,46,3.2,2.6)+eyes(34,46,66); break;
+   case "7": b=stk(34,54,12,30,6)+'<path d="M8 50 Q18 32 40 34 Q62 32 72 50 Q56 60 40 57 Q24 60 8 50 Z" fill="'+cap+'" stroke="'+dark+'" stroke-width="3"/>'+pc(26,44,4,3)+pc(54,42,4,3)+eyes(35,45,64); break;
+   case "8": b='<path d="M35 84 C33 70 45 66 42 52 L55 55 C50 67 44 70 49 84 Z" fill="'+stalk+'" stroke="'+dark+'" stroke-width="3"/>'+dome(44,52,52,24,-14)+pc(32,40,4.2,3.4)+pc(52,32,4,3.2)+eyes(40,50,64)+
+     '<g transform="translate(12,30)"><path d="M8 8 Q0 0 6 -4 Q12 0 8 8 Q16 0 10 -4 Q4 0 8 8" fill="'+glow+'" stroke="'+dark+'" stroke-width="2" opacity=".9"/></g>'; break;
+   case "9": b=stk(14,62,10,22,5)+dome(19,64,26,11)+stk(35,50,13,34,6)+dome(41,52,34,15)+stk(58,68,9,16,4)+dome(62,70,20,9)+pc(41,44,3.6,2.8)+eyes(37,47,60); break;
+   case "10": b='<rect x="30" y="36" width="20" height="48" rx="7" fill="#5a4470" stroke="'+dark+'" stroke-width="3"/>'+
+     '<path d="M50 44 A24 12 0 0 1 50 68 Z" fill="'+cap+'" stroke="'+dark+'" stroke-width="3"/>'+
+     '<path d="M30 56 A18 9 0 0 0 30 74 Z" fill="'+cap+'" stroke="'+dark+'" stroke-width="3"/>'+
+     pc(58,54,3.6,2.6)+pc(24,64,3,2.2)+eyes(36,44,48); break;
+   case "11": b=stk(33,54,14,30,7)+dome(40,56,52,24)+
+     '<path d="M22 42 L27 28 L33 40 Z M35 36 L41 22 L47 36 Z M50 40 L56 28 L61 44 Z" fill="'+cap+'" stroke="'+dark+'" stroke-width="2.6" stroke-linejoin="round"/>'+
+     pc(40,48,3.6,2.8)+eyes(34,46,64); break;
+   case "12": b='<circle cx="40" cy="54" r="27" fill="'+cap+'" stroke="'+dark+'" stroke-width="3"/>'+
+     pc(30,42,3,2.4)+pc(50,38,3.4,2.6)+pc(44,58,2.6,2)+pc(26,58,2.4,2)+eyes(33,49,66); break;
+   case "13": b=stk(31,52,18,32,8)+dome(40,54,58,28,7)+'<path d="M18 46 Q26 38 40 40" stroke="rgba(255,255,255,.5)" stroke-width="3" fill="none" stroke-linecap="round"/>'+pc(30,42,4.4,3.4)+pc(52,36,4,3.2)+eyes(34,46,62)+
+     '<g transform="translate(60,60) rotate(18)"><path d="M0 14 L5 0 L10 14 L5 11 Z" fill="'+glow+'" stroke="'+dark+'" stroke-width="2"/></g>'; break;
+   case "14": b=stk(35,46,10,38,5)+dome(40,48,60,20)+pc(28,40,3.6,2.8)+pc(52,38,3.8,3)+eyes(36,44,56)+
+     '<circle cx="14" cy="80" r="3.4" fill="'+glow+'" stroke="'+dark+'" stroke-width="2"/><circle cx="66" cy="80" r="3.4" fill="'+glow+'" stroke="'+dark+'" stroke-width="2"/><circle cx="24" cy="88" r="2.8" fill="'+glow+'" stroke="'+dark+'" stroke-width="2"/><circle cx="56" cy="88" r="2.8" fill="'+glow+'" stroke="'+dark+'" stroke-width="2"/>'; break;
+   case "15": b=stk(30,48,20,36,9)+dome(40,50,62,30)+pc(40,34,5,4)+pc(24,42,4,3.2)+pc(56,42,4,3.2)+eyes(34,46,60)+
+     '<g transform="translate(40,14)"><rect x="-5" y="0" width="10" height="10" rx="2" fill="'+glow+'" stroke="'+dark+'" stroke-width="2.4"/><path d="M0 10 L0 16" stroke="'+dark+'" stroke-width="2.4"/></g>'; break;
+   case "T": b=stk(32,52,16,32,8)+dome(40,54,52,22)+
+     '<circle cx="40" cy="36" r="11" fill="#fff" stroke="'+dark+'" stroke-width="3"/>'+
+     '<path d="M40 36 L40 29 M40 36 L46 39" stroke="'+dark+'" stroke-width="2.5" stroke-linecap="round"/>'+
+     pc(22,46,3.4,2.6)+pc(58,46,3.4,2.6)+eyes(34,46,62); break;
+   case "S1": case "S2": case "S3":
+     var si=+String(id).charAt(1);
+     if(si===2){ b='<circle cx="40" cy="58" r="24" fill="none" stroke="'+dark+'" stroke-width="2" stroke-dasharray="3 6"/>' ;
+       for(var a=0;a<6;a++){var ang=Math.PI*2*a/6, mx=40+Math.cos(ang)*24, my=58+Math.sin(ang)*12;
+         b+=stk(mx-4,my-8,8,12,4)+dome(mx,my-7,16,8);}
+       b+=pc(40,56,4.4,3.4)+eyes(35,45,60); }
+     else if(si===3){ b=stk(31,56,18,28,8)+
+       '<path d="M24 58 L32 30 L40 52 L48 26 L56 58 Z" fill="'+cap+'" stroke="'+dark+'" stroke-width="3" stroke-linejoin="round"/>'+
+       '<path d="M32 42 L36 34 M46 40 L49 32" stroke="rgba(255,255,255,.55)" stroke-width="2.4" stroke-linecap="round"/>'+
+       pc(40,50,3.6,2.8)+eyes(35,45,66); }
+     else { b='<path d="M37 86 C37 72 29 68 31 56 C33 42 53 40 55 51 C56 58 50 61 46 60" fill="none" stroke="'+dark+'" stroke-width="15" stroke-linecap="round"/>'+
+       '<path d="M37 86 C37 72 29 68 31 56 C33 42 53 40 55 51 C56 58 50 61 46 60" fill="none" stroke="'+stalk+'" stroke-width="10" stroke-linecap="round"/>'+
+       '<g transform="rotate(24 47 58)">'+dome(47,60,24,10)+'</g>'+
+       '<circle cx="37" cy="90" r="3.6" fill="'+stalk+'" stroke="'+dark+'" stroke-width="2.5"/>'+
+       pc(44,52,3.2,2.6)+eyes(31,39,72); }
+     break;
+   case "B": b=stk(27,52,26,36,10)+
+     '<path d="M5 52 A35 28 0 0 1 75 52 Z" fill="'+cap+'" stroke="'+dark+'" stroke-width="3.4"/>'+
+     '<path d="M5 52 Q40 63 75 52" stroke="'+dark+'" stroke-width="2.6" fill="none"/>'+
+     '<path d="M16 40 Q24 32 34 32 M46 30 Q56 30 63 38" stroke="rgba(255,255,255,.4)" stroke-width="2.6" fill="none" stroke-linecap="round"/>'+
+     pc(20,42,4.6,3.6)+pc(58,38,5,4)+pc(40,30,4,3.2)+
+     (done
+       ?'<circle cx="33" cy="64" r="3.2" fill="'+dark+'"/><circle cx="47" cy="64" r="3.2" fill="'+dark+'"/><path d="M30 76 Q40 82 50 76" stroke="'+dark+'" stroke-width="2.4" fill="none" stroke-linecap="round"/>'
+       :'<path d="M28 64 Q33 68 38 64 M42 64 Q47 68 52 64" stroke="'+dark+'" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M27 58 L37 60 M53 58 L43 60" stroke="'+dark+'" stroke-width="2.4" stroke-linecap="round"/>')+
+     '<path d="M32 80 Q40 86 48 80" stroke="'+dark+'" stroke-width="2" fill="none" opacity=".5"/>'; break;
+   default: b=stk(32,50,16,34,8)+dome(40,52,56,26)+eyes(34,46,62);
+  }
+  return '<svg class="nodeart" viewBox="0 0 80 100"><ellipse cx="40" cy="92" rx="23" ry="5" fill="rgba(0,0,0,.35)"/>'+b+'</svg>';
+}
+window.nodeSprite=nodeSprite;
+
 window.__renderLevels=function(w){
   var W=WORLDS[w-1], host=document.getElementById("levelMap"); if(!host) return;
   document.getElementById("worldTitle").textContent=W.name;
   document.getElementById("worldFlavor").textContent=W.flavor;
-  var nodes=[];
-  for(var l=1;l<=12;l++) nodes.push({id:l,label:String(l),cls:"lv"});
-  nodes.push({id:"T",label:"\u23F1",cls:"lv timed"});
-  nodes.push({id:"S",label:"?",cls:"lv secret"});
-  nodes.push({id:"B",label:"",cls:"lv boss"});
 
-  var H=(nodes.length-1)*86+48+78, Wd=300;
-  var svg='<svg viewBox="0 0 '+Wd+' '+H+'" class="lmap">';
-  /* winding vine */
-  var pts=[];
-  for(var i=0;i<nodes.length;i++){
-    var y=48+i*86, x=Wd/2+Math.sin(i*0.95)*88;
-    pts.push([x,y]);
+  /* sequence: standard tangles, a timed detour mid-world, secret BRANCHES, the Elder */
+  var seq=[];
+  for(var l=1;l<=W.std;l++) seq.push({id:l,cls:"lv"});
+  if(W.timed){
+    var tPos=Math.ceil(W.std/2);
+    for(var i=0;i<seq.length;i++) if(seq[i].id===tPos){ seq.splice(i+1,0,{id:"T",cls:"lv timed"}); break; }
   }
-  var d="M"+pts[0][0]+" "+pts[0][1];
-  for(var i=1;i<pts.length;i++){
-    var p=pts[i-1],c=pts[i];
-    d+=" C "+p[0]+" "+(p[1]+44)+", "+c[0]+" "+(c[1]-44)+", "+c[0]+" "+c[1];
+  for(var s=W.secrets;s>=1;s--){
+    var anchor=Math.min(W.std,Math.ceil(W.std*s/W.secrets));
+    for(var i2=seq.length-1;i2>=0;i2--) if(seq[i2].id===anchor){ seq.splice(i2+1,0,{id:"S"+s,cls:"lv secret",branch:(s%2?1:-1)}); break; }
   }
+  seq.push({id:"B",cls:"lv boss"});
+
+  var Wd=300, H=(seq.length-1)*80+140;
+  var rows=[], mainPts=[];
+  for(var r=0;r<seq.length;r++){
+    var y=56+r*80, vx=Wd/2+Math.sin(r*0.95)*80;
+    rows.push({y:y,vx:vx});
+    if(!seq[r].branch) mainPts.push([vx,y,r]);
+  }
+  function midX(r){
+    var prev=null,next=null;
+    for(var a=r-1;a>=0;a--) if(!seq[a].branch){prev=rows[a].vx;break;}
+    for(var b=r+1;b<seq.length;b++) if(!seq[b].branch){next=rows[b].vx;break;}
+    if(prev==null)prev=next; if(next==null)next=prev;
+    return (prev+next)/2;
+  }
+  function nodeX(r){ return seq[r].branch ? Math.max(42,Math.min(Wd-42, midX(r)+seq[r].branch*92)) : rows[r].vx; }
+  function vineD(pts){
+    var d="M"+pts[0][0]+" "+pts[0][1];
+    for(var i=1;i<pts.length;i++){
+      var p=pts[i-1],c=pts[i];
+      d+=" C "+p[0]+" "+(p[1]+40)+", "+c[0]+" "+(c[1]-40)+", "+c[0]+" "+c[1];
+    }
+    return d;
+  }
+  var d=vineD(mainPts);
+
+  /* progress lights the vine: consecutive cleared main-chain nodes */
+  var litCount=0;
+  for(var mi=0;mi<mainPts.length;mi++){
+    if(starsOf(w,seq[mainPts[mi][2]].id)>0) litCount=mi+1; else break;
+  }
+  var segs=Math.max(1,mainPts.length-1);
+  var litLen=litCount<=0 ? 0.10 : Math.min(segs, litCount-0.5+0.5);
+
+  var rr=(function(sd){return function(){sd|=0;sd=sd+0x6D2B79F5|0;var t=Math.imul(sd^sd>>>15,1|sd);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}})(w*7717);
+
+  var svg='<svg viewBox="0 0 '+Wd+' '+H+'" class="lmap" preserveAspectRatio="none">';
+  /* looking down onto the forest floor: scenery scales up toward the viewer */
+  for(var k=0;k<26;k++){
+    var sy=26+rr()*(H-52), depth=0.45+0.85*(sy/H);
+    var side=rr()<0.5, sxx=side? 8+rr()*36 : Wd-8-rr()*36;
+    if(window.__mush) svg+='<g opacity="'+(0.28+0.42*(sy/H)).toFixed(2)+'">'+
+      window.__mush(sxx,sy,0.30*depth,(k%3?"#160b28":W.cap),W.glow,(rr()-0.5)*16)+'</g>';
+    if(k%4===0) svg+='<circle cx="'+(sxx+8)+'" cy="'+(sy-14*depth)+'" r="'+(1.6*depth).toFixed(1)+'" fill="'+W.glow+'" opacity=".5"/>';
+  }
+  /* isometric stepping pads under every node */
+  for(var r2=0;r2<seq.length;r2++){
+    var sc0=0.78+0.42*(rows[r2].y/H), px=nodeX(r2), py=rows[r2].y;
+    svg+='<ellipse cx="'+px+'" cy="'+(py+19*sc0)+'" rx="'+(37*sc0)+'" ry="'+(12.5*sc0)+'" fill="#0c0518" opacity=".85"/>';
+    svg+='<ellipse cx="'+px+'" cy="'+(py+17*sc0)+'" rx="'+(35*sc0)+'" ry="'+(11.5*sc0)+'" fill="#251647" stroke="#0f0620" stroke-width="2"/>';
+    svg+='<ellipse cx="'+(px-9*sc0)+'" cy="'+(py+14*sc0)+'" rx="'+(12*sc0)+'" ry="'+(3.5*sc0)+'" fill="#31205c" opacity=".8"/>';
+  }
+  /* secret branch stubs off the vine */
+  for(var r3=0;r3<seq.length;r3++){
+    if(!seq[r3].branch) continue;
+    var bx=nodeX(r3), by=rows[r3].y, sx=midX(r3);
+    svg+='<path d="M'+sx+' '+by+' Q '+((sx+bx)/2)+' '+(by+16)+' '+bx+' '+by+'" fill="none" stroke="#0f0620" stroke-width="11" stroke-linecap="round"/>';
+    svg+='<path d="M'+sx+' '+by+' Q '+((sx+bx)/2)+' '+(by+16)+' '+bx+' '+by+'" fill="none" stroke="'+W.glow+'" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 9" opacity=".7"/>';
+  }
+  /* the vine: dark bed, muted core, then the LIT length of real progress */
   svg+='<path d="'+d+'" fill="none" stroke="#0f0620" stroke-width="15" stroke-linecap="round"/>';
-  svg+='<path d="'+d+'" fill="none" stroke="'+W.glow+'" stroke-width="6" stroke-linecap="round" opacity=".5" stroke-dasharray="2 13"/>';
-  /* ambient spores along the vine */
-  for(var k=0;k<16;k++){
-    var kx=24+((k*53)%250), ky=30+((k*97)%(H-60));
-    svg+='<circle cx="'+kx+'" cy="'+ky+'" r="'+(1.3+((k*7)%3)*.6)+'" fill="'+W.glow+'" opacity=".4"/>';
-  }
+  svg+='<path d="'+d+'" fill="none" stroke="#3a2a66" stroke-width="8.5" stroke-linecap="round"/>';
+  svg+='<path d="'+d+'" fill="none" stroke="'+W.glow+'" stroke-width="7" stroke-linecap="round" '+
+       'pathLength="'+segs+'" stroke-dasharray="'+litLen.toFixed(2)+' '+(segs+1)+'" class="vlit"/>';
+  svg+='<path d="'+d+'" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" '+
+       'pathLength="'+segs+'" stroke-dasharray="'+litLen.toFixed(2)+' '+(segs+1)+'" opacity=".5"/>';
   svg+='</svg>';
 
-  var html='<div class="lmapwrap">'+svg;
-  for(var i=0;i<nodes.length;i++){
-    var n=nodes[i], un=levelUnlocked(w,n.id), st=starsOf(w,n.id);
-    var x=pts[i][0], y=pts[i][1];
-    var isS=n.id==="S", isB=n.id==="B";
-    var face = isB ? '<span class="bossface">'+
-        '<svg viewBox="0 0 40 40"><path d="M4 22 A16 13 0 0 1 36 22 Z" fill="'+W.cap+'" stroke="#0f0620" stroke-width="2.5"/>'+
-        '<rect x="15" y="20" width="10" height="14" rx="5" fill="#150a26" stroke="#0f0620" stroke-width="2"/>'+
-        '<circle cx="16" cy="26" r="2.1" fill="#fff"/><circle cx="24" cy="26" r="2.1" fill="#fff"/>'+
-        '<ellipse cx="12" cy="15" rx="3.4" ry="2.6" fill="'+W.glow+'"/>'+
-        '<ellipse cx="27" cy="13" rx="2.6" ry="2" fill="'+W.glow+'"/></svg></span>'
-      : (isS ? '<span class="lnum">?</span>' : '<span class="lnum">'+n.label+'</span>');
+  var html='<div class="lmapwrap" style="aspect-ratio:'+Wd+'/'+H+'">'+svg;
+  for(var i3=0;i3<seq.length;i3++){
+    var n=seq[i3], un=levelUnlocked(w,n.id), st=starsOf(w,n.id);
+    var x=nodeX(i3), y=rows[i3].y, sc=0.78+0.42*(y/H);
+    var lx=(x/Wd*100).toFixed(2), ly=(y/H*100).toFixed(2);
     html+='<button class="'+n.cls+(un?"":" locked")+(st>0?" done":"")+'" '+
-      'style="left:'+(x/Wd*100)+'%;top:'+y+'px" data-l="'+n.id+'"'+(un?"":" disabled")+'>'+
-      face+
+      'style="left:'+lx+'%;top:'+ly+'%;--sc:'+sc.toFixed(2)+'" data-l="'+n.id+'"'+(un?"":" disabled")+'>'+
+      (window.nodeSprite?window.nodeSprite(W,n.id,st>0):('<span class="lnum">'+n.id+'</span>'))+
+      (typeof n.id==="number"?'<span class="lnumchip">'+n.id+'</span>':n.id==="T"?'<span class="lnumchip">⏱</span>':"")+
       (un?'<span class="lstars">'+starRow(st)+'</span>':'<span class="llock">🔒</span>')+
       (hasSpore(w,n.id)?'<span class="lspore">🍄</span>':'')+
       '</button>';
-    if(!un) html+='<div class="lreq" style="left:'+(x/Wd*100)+'%;top:'+(y+34)+'px">'+reqText(w,n.id)+'</div>';
-    if(n.id==="T"&&un) html+='<div class="lname" style="left:'+(x/Wd*100)+'%;top:'+(y+34)+'px">Against the clock</div>';
-    if(isS&&un) html+='<div class="lname" style="left:'+(x/Wd*100)+'%;top:'+(y+34)+'px">'+W.secret+'</div>';
-    if(isB&&un) html+='<div class="lname" style="left:'+(x/Wd*100)+'%;top:'+(y+56)+'px">'+W.elder+'</div>';
+    var labY=((y+34*sc)/H*100).toFixed(2);
+    if(!un) html+='<div class="lreq" style="left:'+lx+'%;top:'+labY+'%">'+reqText(w,n.id)+'</div>';
+    else if(String(n.id).charAt(0)==="S") html+='<div class="lname" style="left:'+lx+'%;top:'+labY+'%">'+W.secret+'</div>';
+    else if(n.id==="B") html+='<div class="lname" style="left:'+lx+'%;top:'+((y+44*sc)/H*100).toFixed(2)+'%">'+W.elder+'</div>';
+    else if(n.id==="T") html+='<div class="lname" style="left:'+lx+'%;top:'+labY+'%">Against the clock</div>';
+  }
+  /* fireflies drifting over the whole path */
+  for(var f=0;f<8;f++){
+    html+='<i class="ff" style="left:'+(6+rr()*88).toFixed(1)+'%;top:'+(4+rr()*90).toFixed(1)+'%;'+
+      'background:'+W.glow+';box-shadow:0 0 8px 2px '+W.glow+';'+
+      'animation:flit '+(5+rr()*6).toFixed(1)+'s ease-in-out infinite, blinky '+(1.5+rr()*2).toFixed(1)+'s ease-in-out infinite;'+
+      'animation-delay:-'+(rr()*5).toFixed(1)+'s,-'+(rr()*3).toFixed(1)+'s"></i>';
   }
   html+='</div>';
   host.innerHTML=html;
@@ -1517,13 +1720,18 @@ function showScreen(id){
     var el=document.getElementById(s); if(el) el.classList.toggle("on", s===id);
   });
   window.scrollTo(0,0);
+  var GW=(window.WORLDS&&window.__curWorld)?window.WORLDS[window.__curWorld-1]:null;
+  if(window.__buildGrove) window.__buildGrove(id==="scWorlds"?null:GW);
+  if(window.__decorateHeaders) window.__decorateHeaders(id==="scWorlds"?null:GW);
 }
 window.__showScreen=showScreen;
 window.__openWorld=function(w){
+  window.__curWorld=w;
   if(window.__renderLevels) window.__renderLevels(w);
   showScreen("scLevels");
 };
 window.__playLevel=function(w,l){
+  window.__curWorld=w;
   if(window.__game) window.__game.playLevel(w,l);
   var W=window.WORLDS&&window.WORLDS[w-1];
   if(W&&window.__buildScene) window.__buildScene(W);
@@ -1535,6 +1743,90 @@ on("backWorlds",function(){ if(window.__renderWorlds) window.__renderWorlds(); s
 on("toDaily",   function(){ if(window.__game) window.__game.daily(); showScreen("scGame"); });
 
 /* ================= LIVING SCENE ================= */
+
+/* ============ FULL-PAGE LIVING GROVE ============ */
+window.__buildGrove=function(W){
+  var host=document.getElementById("grove"); if(!host||!window.__mush) return;
+  var caps = W ? [W.cap] : ["#ff5fa8","#c8ff5f","#ffd84d","#7fd4ff"];
+  var glow = W ? W.glow : "#a8ffe0";
+  var deep = W ? W.back : "#1f1035";
+  function rnd(sd){return function(){sd|=0;sd=sd+0x6D2B79F5|0;var t=Math.imul(sd^sd>>>15,1|sd);
+    t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+  var r=rnd(((W&&W.id)||99)*3313);
+  var s='<svg viewBox="0 0 900 620" preserveAspectRatio="xMidYMax slice">';
+  s+='<radialGradient id="gvg" cx="50%" cy="100%" r="80%"><stop offset="0" stop-color="'+glow+'" stop-opacity=".14"/><stop offset="1" stop-color="'+glow+'" stop-opacity="0"/></radialGradient>';
+  s+='<rect width="900" height="620" fill="url(#gvg)"/>';
+  /* light shafts */
+  s+='<polygon points="180,0 320,0 420,620 120,620" fill="'+glow+'" opacity=".045"/>';
+  s+='<polygon points="600,0 700,0 860,620 560,620" fill="'+glow+'" opacity=".035"/>';
+  /* hills */
+  s+='<path d="M0 470 Q150 438 300 462 T600 456 T900 466 L900 620 L0 620 Z" fill="'+deep+'" opacity=".8"/>';
+  s+='<path d="M0 520 Q200 492 420 514 T900 508 L900 620 L0 620 Z" fill="#120a24" opacity=".9"/>';
+  /* far silhouettes */
+  for(var i=0;i<7;i++){
+    s+='<g class="gsw'+(i%3? " s"+(1+i%3):"")+'" opacity=".3">'+
+       window.__mush(60+i*125+(r()-.5)*40, 468+(r()-.5)*10, .9+r()*.7, "#0c0518", glow, (r()-.5)*8)+'</g>';
+  }
+  /* mid row, coloured */
+  for(var j2=0;j2<5;j2++){
+    s+='<g class="gsw'+(j2%3? " s"+(1+j2%3):"")+'" opacity=".55">'+
+       window.__mush(90+j2*180+(r()-.5)*60, 522+(r()-.5)*8, 1.4+r()*.9, caps[j2%caps.length], glow, (r()-.5)*10)+'</g>';
+  }
+  /* near flanking giants */
+  s+='<g class="gsw s2" opacity=".95">'+window.__mush(52,618,3.4,caps[0],glow,-5)+'</g>';
+  s+='<g class="gsw s3" opacity=".95">'+window.__mush(852,620,3.9,caps[caps.length-1],glow,6)+'</g>';
+  /* rising spores */
+  for(var k=0;k<14;k++){
+    s+='<circle class="gr-rise" cx="'+(30+r()*840).toFixed(0)+'" cy="'+(400+r()*200).toFixed(0)+
+       '" r="'+(1.6+r()*2.4).toFixed(1)+'" fill="'+glow+'" style="animation-duration:'+(7+r()*9).toFixed(1)+
+       's;animation-delay:-'+(r()*8).toFixed(1)+'s"/>';
+  }
+  s+='</svg>';
+  var ff="";
+  for(var f=0;f<10;f++){
+    ff+='<i class="ff" style="left:'+(3+r()*94).toFixed(1)+'%;top:'+(8+r()*80).toFixed(1)+'%;'+
+      'background:'+glow+';box-shadow:0 0 9px 2px '+glow+';'+
+      'animation:flit '+(5+r()*7).toFixed(1)+'s ease-in-out infinite, blinky '+(1.4+r()*2.4).toFixed(1)+'s ease-in-out infinite;'+
+      'animation-delay:-'+(r()*6).toFixed(1)+'s,-'+(r()*3).toFixed(1)+'s"></i>';
+  }
+  host.innerHTML=s+ff;
+};
+
+/* ============ HEADERS: mushrooms + always-moving particles ============ */
+window.__decorateHeaders=function(W){
+  if(!window.__mush) return;
+  var cap=(W&&W.cap)||"#ff5fa8", glow=(W&&W.glow)||"#a8ffe0", cap2=(W&&W.cap)||"#ffd84d";
+  function mini(sz,c,tilt){return '<svg style="width:'+sz+'px;height:'+sz+'px" viewBox="0 0 60 64">'+
+    window.__mush(30,56,0.52*(sz/44),c,glow,tilt)+'</svg>';}
+  function parts(n){
+    var p="";
+    for(var i=0;i<n;i++){
+      p+='<i class="pp" style="left:'+(5+Math.random()*90).toFixed(0)+'%;top:'+(10+Math.random()*75).toFixed(0)+'%;'+
+        'background:'+(i%2?glow:cap)+';box-shadow:0 0 6px 1px '+(i%2?glow:cap)+';'+
+        'animation-duration:'+(4.5+Math.random()*4).toFixed(1)+'s,'+(1.6+Math.random()*1.6).toFixed(1)+'s;'+
+        'animation-delay:-'+(Math.random()*5).toFixed(1)+'s,-'+(Math.random()*2).toFixed(1)+'s"></i>';
+    }
+    return p;
+  }
+  function deco(el,html){
+    if(!el) return;
+    var old=el.querySelector(":scope > .hdeco");
+    if(old) old.parentNode.removeChild(old);
+    var d=document.createElement("span"); d.className="hdeco"; d.innerHTML=html;
+    el.appendChild(d);
+  }
+  var hp=document.querySelector("#scWorlds .hplate");
+  deco(hp,'<span style="left:2px;bottom:-8px">'+mini(44,cap,-8)+'</span>'+
+          '<span style="left:36px;bottom:-4px">'+mini(30,cap2,6)+'</span>'+
+          '<span style="right:36px;bottom:-4px">'+mini(32,cap,-5)+'</span>'+
+          '<span style="right:2px;bottom:-8px">'+mini(46,cap2,9)+'</span>'+parts(6));
+  deco(document.querySelector("#scGame .brand"),
+       '<span style="left:-52px;bottom:0">'+mini(40,cap,-7)+'</span>'+
+       '<span style="right:-52px;bottom:0">'+mini(42,cap2,8)+'</span>'+parts(5));
+  deco(document.querySelector("#scLevels .navrow"),
+       '<span style="right:0;bottom:-6px">'+mini(36,cap,7)+'</span>'+parts(5));
+};
+
 window.__buildScene=function(W){
   var host=document.getElementById("scene"); if(!host) return;
   var glow=(W&&W.glow)||"#a8ffe0", cap=(W&&W.cap)||"#ff5fa8", id=(W&&W.id)||1;
@@ -1582,6 +1874,8 @@ window.__buildScene=function(W){
 /* first paint: grove list + an opening scene behind the daily board */
 if(window.__renderWorlds) window.__renderWorlds();
 window.__buildScene(window.WORLDS ? window.WORLDS[2] : null);
+if(window.__buildGrove) window.__buildGrove(null);
+if(window.__decorateHeaders) window.__decorateHeaders(null);
 })();
 </script>
 </body>
