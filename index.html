@@ -3,16 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>MYCO — wake the sleeping forest</title>
+<title>GLOWGROVE — daily mycelium puzzle</title>
 <meta name="description" content="Spin the mycelium, feed the spore-heart, and wake every Sporeling on the forest floor. A new tangle every day. Free, no signup.">
 <meta property="og:title" content="MYCO — wake the sleeping forest">
 <meta property="og:description" content="Spin the mycelium and wake every Sporeling. New tangle daily!">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#1a0f2e">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Bungee&display=swap" rel="stylesheet">
 <style>
 /* RELAY — casual mobile puzzle language.
    Saturated gradients · chunky rounded forms · dark cartoon outlines ·
@@ -28,8 +25,8 @@
   --cream:#fff4e8; --white:#ffffff;
   --outline:#0f0620; --outline-2:#1c0e33;
   --dead:#4a3a6b; --dead-dk:#2f2350;
-  --fd:"Bungee","Baloo 2",cursive;      /* numerals + HUD keys */
-  --fb:"Baloo 2",cursive;               /* prose + labels */
+  --fd:ui-rounded,"SF Pro Rounded","Segoe UI Variable Display",Nunito,system-ui,sans-serif; /* numerals + HUD keys */
+  --fb:ui-rounded,"SF Pro Rounded","Segoe UI Variable Display",Nunito,system-ui,sans-serif; /* prose + labels */
   --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px;
   --r2:8px; --r3:12px; --r4:16px; --r5:20px;
   --e:cubic-bezier(.2,.8,.3,1);
@@ -570,7 +567,8 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 
 
 /* numerals ride the display face so digits never read as system text */
-.scoreline b,.bal b,.tick b,.sc b,.bossmeta b,.lnumchip,.wrow{font-family:var(--fd);letter-spacing:.02em}
+.scoreline b,.bal b,.tick b,.sc b,.bossmeta b,.lnumchip,.wrow{font-family:var(--fd);letter-spacing:.02em;
+  font-variant-numeric:tabular-nums;font-weight:800}
 .scoreline b,.sc b{font-weight:400}
 
 
@@ -623,8 +621,8 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 
 
 /* powerup rail */
-.pwbar{display:flex;gap:var(--s2);justify-content:center}
-.pw{position:relative;width:52px;height:46px;padding:0;border-radius:var(--r3);
+.pwbar{display:flex;gap:var(--s2);justify-content:center;flex-wrap:nowrap}
+.pw{position:relative;flex:1 1 0;min-width:0;max-width:56px;height:46px;padding:0;border-radius:var(--r3);
   display:grid;place-items:center;color:#d8c6ff;
   background:linear-gradient(180deg,var(--plum-2,#3d2666),var(--plum,#2d1b4d));
   border:3px solid var(--ink,#0f0620);
@@ -695,6 +693,58 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 @media (min-height:1100px){ .wrap{max-width:560px} .forest{height:130px} }
 @media (max-height:1000px){ .wrap{gap:var(--s2)} .forest{height:72px} }
+/* Short viewports (iPhone SE/8, landscape phones) cannot fit 850px of chrome.
+   fitBoard clamps at its floor and the dock ends up under the tab bar, so the
+   decorative rows are shed here rather than letting the UI break. */
+@media (max-height:760px){
+  .wrap{gap:6px}
+  .forest,.forestline,#scGame > footer{display:none}
+  .topbar{grid-template-columns:38px 1fr 38px}
+  .topbar .icon{width:38px;height:38px}
+  #brandArt{max-width:150px}
+  .sub{font-size:.68rem}
+  .tabs{gap:6px}
+  .tabs .tab{height:38px}
+  .scoreline{padding:6px 10px}
+  .meter{height:8px}
+  .pwbar .pw{height:40px}
+  .dock{padding:6px 6px 4px;gap:6px}
+  .ctl button{height:42px}
+  body{padding-bottom:calc(86px + env(safe-area-inset-bottom))}
+}
+/* Smallest supported phones (320x568). Sheds the mode tabs and the meter too;
+   the board stays playable and the dock stays clear of the tab bar. */
+@media (max-height:600px){
+  .wrap{gap:4px}
+  .meter,.tick{display:none}
+  .topbar{grid-template-columns:34px 1fr 34px}
+  .topbar .icon{width:34px;height:34px}
+  #brandArt{max-width:120px}
+  .sub{display:none}
+  .tabs .tab{height:34px}
+  .pwbar .pw{height:34px}
+  .ctl button{height:38px}
+  .dock{padding:5px 5px 3px;gap:5px}
+  body{padding-bottom:calc(80px + env(safe-area-inset-bottom))}
+}
+/* Landscape phones: ~330px of usable height after the tab bar. Stacking cannot
+   fit, so the play column becomes two columns - board left, controls right. */
+@media (max-height:480px) and (orientation:landscape){
+  .wrap{max-width:none}
+  #scGame{display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,260px);
+    grid-template-areas:"frame side";column-gap:12px;align-items:start}
+  #scGame > .frame{grid-area:frame;align-self:center}
+  #scGame > .topbar,#scGame > .tabs,#scGame > .scoreline,
+  #scGame > .pwbar,#scGame > .dock{grid-area:side}
+  #scGame > .topbar{align-self:start}
+  #scGame > .tabs{margin-top:56px}
+  #scGame > .scoreline{margin-top:104px}
+  #scGame > .pwbar{margin-top:158px}
+  #scGame > .dock{margin-top:210px}
+  .forest,.forestline,.meter,.tick,#scGame > footer,.sub{display:none}
+  .pwbar .pw{height:32px}
+  .ctl button{height:36px}
+}
 @media(max-width:400px){
   .scoreline{font-size:.68rem;padding:6px 10px}
   .scoreline b{font-size:1rem}
@@ -866,7 +916,7 @@ body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
   </div>
   </div>
 
-  <footer>Made 2026 · free, no signup · grows right in your browser</footer>
+  <footer>Made 2026 · free, no signup · grows right in your browser<br><a href="privacy.html" style="color:#c9b3ff">Privacy</a></footer>
 </section>
 </div>
 
@@ -2227,9 +2277,32 @@ function fitBoard(){
   /* --bmax caps frame WIDTH; the square board makes height follow, so the
      frame's own vertical chrome has to come out of the budget first. */
   var fs=getComputedStyle(fr), extra=fr.offsetHeight-fr.querySelector("#board").offsetHeight;
-  fr.style.setProperty("--bmax",Math.max(240,Math.round(window.innerHeight-chrome-extra))+"px");
+  /* The rail must never wrap - a wrapped rail grows the chrome AFTER fitBoard
+     has measured it, which pushes the dock under the fixed tab bar. */
+  fr.style.setProperty("--bmax",Math.max(150,Math.round(window.innerHeight-chrome-extra))+"px");
 }
 addEventListener("resize",fitBoard);
+/* One-shot measurement is not enough: rows appear/disappear (boss bar, mode
+   tabs, powerup rail) and fonts settle after first paint, so the chrome height
+   changes AFTER fitBoard has run. Observe it and re-fit, with a guard so the
+   observer cannot loop on its own writes. */
+var _fitting=false;
+if(window.ResizeObserver){
+  var _ro=new ResizeObserver(function(){
+    if(_fitting) return;
+    _fitting=true;
+    requestAnimationFrame(function(){ fitBoard(); _fitting=false; });
+  });
+  addEventListener("load",function(){
+    var g=document.getElementById("scGame");
+    if(!g) return;
+    for(var i=0;i<g.children.length;i++){
+      var el=g.children[i];
+      if(!el.classList.contains("frame")) _ro.observe(el);
+    }
+  });
+}
+addEventListener("load",function(){ requestAnimationFrame(fitBoard); setTimeout(fitBoard,120); });
 addEventListener("orientationchange",fitBoard);
 window.fitBoard=fitBoard;
 window.__inv={code:myCode,link:inviteLink,thanks:thanksCode,claim:claimInvite,
@@ -2240,6 +2313,9 @@ window.__daily={open:openDaily,claim:claimDaily,roll:function(){return dailyRoll
   cbDue:function(){return comebackDue(load())},cbClaim:claimComeback,
   cal:renderCal,quests:renderQuests,state:load};
 
+/* QA hooks are an instant-win cheat in a shipped build, so they are gated.
+   Tests opt in with ?qa=1; players never get them. */
+var QA=/[?&]qa=1/.test(location.search);
 window.__game={
   refreshPw:refreshPw, questBump:bumpQuest,
   lastWin:function(){ return lastSpores },
@@ -2266,8 +2342,8 @@ window.__game={
   },
   inv:function(){ return load().inv||{}; },
   toggleMute:function(){ muted=!muted; return muted; },
-  debugState:function(){ return G?{pairs:G.pairs,sol:G.sol,K:G.K,N:N}:null; },
-  debugSolve:function(){ if(!G) return;
+  debugState:QA && function(){ return G?{pairs:G.pairs,sol:G.sol,K:G.K,N:N}:null; },
+  debugSolve:QA && function(){ if(!G) return;
     for(var k=0;k<G.K;k++) paths[k]=G.sol[k].slice();
     moves=G.K; paint(true);
   },
@@ -2332,7 +2408,7 @@ window.__cityLight(saved);
 
 (function(){
   function set(id,t,o){var e=document.getElementById(id); if(e&&window.bubbleText) e.innerHTML=window.bubbleText(t,o);}
-  set("brandArt","MYCO",{fill:"#a8ffe0",fill2:"#16b98a",outline:"#0f0620",extrude:"#0b6d51",tilt:-2});
+  set("brandArt","GLOWGROVE",{fill:"#a8ffe0",fill2:"#16b98a",outline:"#0f0620",extrude:"#0b6d51",tilt:-2,w:20,gap:4});
   set("winTitle","BLOOM!",{fill:"#ff8ec4",fill2:"#e0308a",outline:"#0f0620",extrude:"#8f1256",tilt:1.5});
   set("statsTitle","RECORD",{fill:"#ffe89a",fill2:"#ffb31c",outline:"#0f0620",extrude:"#b06a00"});
   set("helpTitle","HOW TO PLAY",{fill:"#a8ffe0",fill2:"#16b98a",outline:"#0f0620",extrude:"#0b6d51"});
